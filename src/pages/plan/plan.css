@@ -1,0 +1,115 @@
+/* The Plan page and its bottom sheets. Sizes as in prototype v5 lines 99–142 and 381–548. */
+
+.page.plan { padding-top: 28px; }
+.plan-header { display: flex; justify-content: space-between; align-items: center; }
+.plan-muted { font-size: 13px; color: var(--color-neutral-700); }
+.plan-small { font-size: 12px; color: var(--color-neutral-700); }
+
+.plan-goal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background: var(--color-neutral-100);
+}
+.plan-goal-head { display: flex; flex-direction: column; gap: 6px; }
+.plan-goal-year { font-family: var(--font-heading); font-size: 46px; line-height: 1; }
+.plan-progress { position: relative; height: 10px; border-radius: 999px; background: var(--color-neutral-300); }
+.plan-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--color-accent); }
+.plan-progress-mark {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--color-text);
+}
+.plan-goal-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.plan-goal-col { display: flex; flex-direction: column; gap: 2px; }
+.plan-goal-amount { font-size: 16px; font-weight: 700; }
+
+.plan-alloc { display: flex; flex-direction: column; gap: 12px; padding: 6px 2px 0; }
+.plan-alloc-head { display: flex; justify-content: space-between; align-items: center; }
+.plan-section-title { font-size: 17px; font-weight: 700; }
+.plan-alloc-bar { display: flex; height: 12px; gap: 2px; overflow: hidden; border-radius: 999px; }
+.plan-slot {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto 48px;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 15px;
+}
+/* A long name and its tag share the column: the tag moves to a second line rather than run into the percentages */
+.plan-slot-name { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; min-width: 0; }
+.plan-slot-name .tag { white-space: nowrap; }
+.plan-slot-pct { font-size: 13px; color: var(--color-neutral-700); white-space: nowrap; }
+.plan-slot-diff { text-align: right; font-size: 13px; font-weight: 700; color: var(--color-neutral-600); }
+.plan-slot-diff.is-off { color: var(--color-accent-700); }
+
+/* Layout inside the sheets */
+.sheet-inline { display: flex; gap: 10px; align-items: flex-end; }
+.sheet-inline .seg { flex: none; }
+.grow { flex: 1; min-width: 0; }
+.seg-opt { white-space: nowrap; flex: none; }
+
+.alloc-row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  align-items: center;
+}
+.alloc-name { font-size: 15px; font-weight: 600; }
+.alloc-amount { font-weight: 700; text-align: right; }
+.alloc-sub { font-size: 12px; color: var(--color-neutral-700); }
+.alloc-move { font-size: 12px; text-align: right; white-space: nowrap; }
+.alloc-summary { font-size: 13px; color: var(--color-neutral-800); }
+
+.rebal-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+.rebal-amount { font-weight: 700; }
+
+.calib-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 8px;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--color-neutral-200);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.calib-item-name { overflow: hidden; font-size: 14px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+.calib-item-value { font-size: 14px; text-align: right; }
+.calib-item-sub { font-size: 12px; color: var(--color-neutral-700); }
+.calib-item-tag { justify-self: end; }
+
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-100);
+}
+.stat-label { font-size: 12px; color: var(--color-neutral-700); }
+.stat-value { font-size: 17px; font-weight: 700; }
+
+.calib-diff { padding: 10px 14px; border-radius: 14px; font-size: 14px; font-weight: 700; }
+.calib-diff.is-up { background: var(--color-accent-2-100); color: var(--color-accent-2-900); }
+.calib-diff.is-down { background: var(--color-accent-100); color: var(--color-accent-800); }
+
+/* Vertical space around empty states (prototype: 14px in the calibration list, 12px in Portfolio settings) */
+.calib-empty { padding: 14px 0; }
+.rebal-empty { padding: 11px 0; }
+
+/* Rebalancing reminder: not yet checked / checked this period */
+.rebal-due { font-size: 13px; font-weight: 600; color: var(--color-accent-800); }
+.rebal-checked { font-size: 13px; color: var(--color-accent-2-800); }

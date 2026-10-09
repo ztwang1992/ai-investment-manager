@@ -1,0 +1,47 @@
+/* The Portfolio settings sub-page. Sizes as in prototype v5 lines 303–367 and 522–535. */
+
+.settings { display: flex; flex-direction: column; gap: 22px; }
+.settings-section { display: flex; flex-direction: column; gap: 10px; }
+.settings-head { display: flex; justify-content: space-between; align-items: center; }
+.settings-head.baseline { align-items: baseline; }
+.btn-small { min-height: 32px; font-size: 13px; }
+
+.target-view { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; }
+.target-view-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.target-name { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.target-pct { font-weight: 700; }
+.target-bar { height: 4px; border-radius: 999px; background: var(--color-neutral-200); }
+.target-bar > div { height: 100%; border-radius: 999px; }
+.target-sum { display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px; }
+.target-sum > span:first-child { color: var(--color-neutral-700); }
+.target-sum > span:last-child { font-weight: 700; }
+/* The total note: red on error; line height 1.5 throughout (the prototype's draftMsgStyle) */
+.draft-msg { line-height: 1.5; }
+
+.target-edit { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.target-edit-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.target-edit-controls { display: flex; flex: none; align-items: center; gap: 4px; }
+.target-input { width: 72px; min-height: 36px; padding-inline: 10px; text-align: right; font-weight: 700; }
+.target-input.is-bad { border-color: var(--color-accent); background: var(--color-accent-100); }
+.target-unit { width: 16px; font-weight: 700; }
+.target-remove { color: var(--color-neutral-600); }
+.merge-btn { align-self: flex-start; min-height: 28px; font-size: 12px; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-btn { font-size: 13px; }
+.chip-btn-small { min-height: 28px; padding: 2px 12px; font-size: 12px; }
+
+.undefined-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 0; }
+.undefined-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.undefined-sub { padding-left: 18px; font-size: 12px; color: var(--color-neutral-700); }
+
+.settings-rule { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.stepper { display: flex; align-items: center; gap: 6px; }
+.stepper-value { width: 48px; text-align: center; font-weight: 700; }
+
+.goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.settings-custom-head { display: flex; flex-direction: column; gap: 6px; padding-top: 6px; }
+.settings-custom-row { display: flex; gap: 8px; }
+.settings-group-select { width: auto; flex: none; }
+.draft-empty { padding: 12px 0; }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-0de07f1b-6218-45cc-b682-d10884a79d30/styles.css">
+<script src="_ds/organic-0de07f1b-6218-45cc-b682-d10884a79d30/_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}</style>
+</helmet>
+<main style="max-width:900px;padding:56px 28px 96px;display:flex;flex-direction:column;gap:52px">
+
+<header style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tag tag-accent">技术方案 v0.1</span><a class="tag tag-accent-2" href="投资管理器 原型.dc.html" style="text-decoration:none">原型 →</a><a class="tag tag-neutral" href="投资管理器 信息架构 v2.dc.html" style="text-decoration:none">规划文档 →</a></div>
+<h1 style="font-family:var(--font-heading);font-weight:400;font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0">怎么做成真正的 App</h1>
+<p style="font-size:18px;line-height:1.6;margin:0;max-width:640px;text-wrap:pretty">网页 App（PWA）用 Claude Code 开发，部署在 Cloudflare，数据放 Supabase 的新加坡区。整套免备案，只用免费额度，国内能访问但速度一般。</p>
+</header>
+
+<section style="display:flex;flex-direction:column;gap:18px">
+<h2 style="font-family:var(--font-heading);font-weight:400;font-size:28px;margin:0">整体架构</h2>
+<div data-om-raster="" style="background:var(--color-neutral-100);border-radius:var(--radius-lg);padding:28px;display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1.2fr) 36px minmax(0,1fr);align-items:center;gap:8px">
+<div style="background:var(--color-bg);border-radius:var(--radius-md);padding:18px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-sm)">
+<span class="tag tag-accent" style="align-self:flex-start">手机</span>
+<span style="font-weight:700;font-size:17px">PWA</span>
+<span style="font-size:13px;line-height:1.5;color:var(--color-neutral-800)">React + Vite · 添加到主屏幕 · 本地缓存（IndexedDB），离线也能看</span>
+</div>
+<div style="text-align:center;font-size:22px;color:var(--color-neutral-600)">⇄</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="background:var(--color-bg);border-radius:var(--radius-md);padding:16px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-sm)"><span class="tag tag-neutral" style="align-self:flex-start">Cloudflare Pages</span><span style="font-size:13px;line-height:1.5">托管网页，全球 CDN</span></div>
+<div style="background:var(--color-bg);border-radius:var(--radius-md);padding:16px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-sm)"><span class="tag tag-neutral" style="align-self:flex-start">Cloudflare Worker</span><span style="font-size:13px;line-height:1.5">行情与汇率中转，统一格式，结果缓存 15 分钟</span></div>
+<div style="background:var(--color-bg);border-radius:var(--radius-md);padding:16px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow-sm)"><span class="tag tag-accent-2" style="align-self:flex-start">Supabase · 新加坡</span><span style="font-size:13px;line-height:1.5">邮箱登录 · Postgres 数据库 · 行级权限，每个人只能看自己的数据</span></div>
+</div>
+<div style="text-align:center;font-size:22px;color:var(--color-neutral-600)">→</div>
+<div style="background:var(--color-bg);border-radius:var(--radius-md);padding:18px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-sm)">
+<span class="tag tag-neutral" style="align-self:flex-start">外部数据</span>
+<span style="font-weight:700;font-size:17px">免费接口</span>
+<span style="font-size:13px;line-height:1.5;color:var(--color-neutral-800)">美股价格 · A 股 / 场外基金净值 · 汇率。具体数据源开发时验证</span>
+</div>
+</div>
+<p style="margin:0;font-size:14px;line-height:1.6;color:var(--color-neutral-700);max-width:640px">手机只和 Cloudflare、Supabase 通信，不直接调外部接口。外部接口失效时只改 Worker，App 不用动。</p>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:18px">
+<h2 style="font-family:var(--font-heading);font-weight:400;font-size:28px;margin:0">三条数据流</h2>
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ flows }}" as="f" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:700;font-size:17px">{{ f.name }}</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+<sc-for list="{{ f.steps }}" as="st">
+<div style="display:flex;align-items:center;gap:8px"><span style="background:var(--color-neutral-100);border-radius:999px;padding:8px 14px;font-size:14px">{{ st.t }}</span><sc-if value="{{ st.arrow }}"><span style="color:var(--color-neutral-600)">→</span></sc-if></div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="display:flex;flex-direction:column;gap:14px">
+<h2 style="font-family:var(--font-heading);font-weight:400;font-size:28px;margin:0">为什么这样选</h2>
+<ul style="margin:0;padding-left:20px;line-height:1.8;font-size:16px">
+<sc-for list="{{ reasons }}" as="r"><li>{{ r }}</li></sc-for>
+</ul>
+</section>
+
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const mk = arr => arr.map((t, i) => ({ t, arrow: i < arr.length - 1 }));
+    return {
+      flows: [
+        { name: '① 记一笔', steps: mk(['手机录入', '先写本地（立即显示）', '后台同步到 Supabase', '其他设备登录后拉取']) },
+        { name: '② 拉行情', steps: mk(['打开 App', '请求 Worker', 'Worker 查缓存，过期才调外部接口', '返回价格和汇率', '本地重算市值和配置']) },
+        { name: '③ 换设备 / 同步', steps: mk(['邮箱登录', '从 Supabase 拉全部数据', '存入本地', '冲突时以最后修改为准']) },
+      ],
+      reasons: [
+        'PWA：一套代码，手机和电脑都能用，不用上架应用商店，最适合用 Claude Code 边做边改。',
+        'Cloudflare：免费额度够个人用，没有备案要求，香港和亚太节点离国内近。',
+        'Supabase：免费版自带登录和数据库，行级权限让将来公开给别人用时数据天然隔离。',
+        '行情走 Worker 中转：浏览器直接调免费接口会被跨域限制；中转后还能缓存，节省接口额度。',
+        '所有计算（配置比例、再平衡、退休推算）都在手机本地算，服务器只存原始数据，简单且便宜。',
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

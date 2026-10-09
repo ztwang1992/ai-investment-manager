@@ -1,0 +1,164 @@
+/* The Holdings page, account details and account Settings. Sizes as in the inline styles of prototype v5 lines 143–206, 368–380 and 472–503.
+   Amounts never wrap (the prototype's screenshots broke 「¥145.3万 · 46.8%」 and 「¥100.0万」 onto two lines); notes are as in the prototype and may wrap on narrow screens, never truncated. */
+
+.page.holdings { padding-top: 28px; }
+.holdings-header { display: flex; justify-content: space-between; align-items: center; }
+.holdings-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.holdings-bar .seg { flex: none; }
+.holdings-total { font-weight: 700; white-space: nowrap; }
+
+/* Tappable rows: buttons without their default styles */
+.asset-row,
+.inst-row,
+.plat-row,
+.account-card,
+.acct-item,
+.account-row {
+  appearance: none;
+  width: 100%;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* By asset */
+.asset-groups { display: flex; flex-direction: column; gap: 20px; }
+.asset-group { display: flex; flex-direction: column; gap: 8px; }
+.asset-group-head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px; }
+.asset-group-name { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.asset-group-value { font-size: 13px; color: var(--color-neutral-700); white-space: nowrap; }
+.asset-box { overflow: hidden; border-radius: var(--radius-md); background: var(--color-neutral-100); }
+
+.asset-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 0;
+  background: none;
+}
+.asset-row-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.asset-row-name { font-weight: 600; }
+.asset-row-sub { font-size: 12px; color: var(--color-neutral-700); }
+.asset-row-right { display: flex; flex: none; flex-direction: column; align-items: flex-end; gap: 2px; }
+.asset-row-value { font-weight: 600; white-space: nowrap; }
+.asset-row-pnl { font-size: 12px; }
+
+.asset-insts { display: flex; flex-direction: column; gap: 6px; padding: 0 12px 12px; }
+.inst-card { overflow: hidden; border-radius: 14px; background: var(--color-bg); }
+.inst-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 0;
+  background: none;
+}
+.inst-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.inst-title { overflow: hidden; font-size: 14px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+.inst-name { font-weight: 400; color: var(--color-neutral-700); }
+.inst-sub { font-size: 12px; color: var(--color-neutral-700); }
+.inst-value { flex: none; font-size: 14px; font-weight: 600; white-space: nowrap; }
+
+.plats { display: flex; flex-direction: column; padding: 0 14px 10px; }
+.plat-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 7px 0;
+  border: 0;
+  border-top: 1px solid var(--color-neutral-200);
+  background: none;
+  font-size: 13px;
+}
+.plat-qty { color: var(--color-neutral-700); }
+
+/* By account */
+.accounts { display: flex; flex-direction: column; gap: 14px; }
+.accounts-dist { display: flex; flex-direction: column; gap: 8px; }
+.accounts-count { font-size: 13px; color: var(--color-neutral-700); }
+.accounts-bar { display: flex; gap: 2px; height: 16px; overflow: hidden; border-radius: 999px; }
+.accounts-list { display: flex; flex-direction: column; gap: 8px; }
+.account-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-100);
+}
+.account-card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; }
+.account-card-left { display: flex; flex: 1; align-items: center; gap: 10px; min-width: 0; }
+.account-names { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.account-name { font-weight: 600; white-space: nowrap; }
+.account-meta { font-size: 12px; color: var(--color-neutral-700); white-space: nowrap; }
+.account-card-right { display: flex; flex: none; flex-direction: column; align-items: flex-end; gap: 2px; white-space: nowrap; }
+.account-value { font-weight: 600; }
+.account-share { font-size: 12px; color: var(--color-neutral-700); }
+.account-mini-bar { display: flex; gap: 2px; width: 100%; height: 6px; overflow: hidden; border-radius: 999px; background: var(--color-neutral-200); }
+.group-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--color-neutral-700); }
+.group-legend > span { display: flex; align-items: center; gap: 6px; }
+
+/* Account details sheet */
+.acct-summary { display: flex; align-items: center; gap: 20px; }
+.donut { display: grid; flex: none; place-items: center; width: 132px; height: 132px; border-radius: 50%; }
+.donut-hole {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--color-bg);
+}
+.donut-label { font-size: 11px; color: var(--color-neutral-700); }
+.donut-value { font-size: 15px; font-weight: 700; }
+.acct-legend { display: flex; flex: 1; flex-direction: column; gap: 8px; min-width: 0; }
+.acct-legend-row { display: flex; justify-content: space-between; font-size: 13px; }
+.acct-legend-name { display: flex; align-items: center; gap: 6px; }
+.acct-legend-pct { font-weight: 600; }
+.acct-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-neutral-200);
+  background: none;
+  font-size: 14px;
+}
+.acct-item-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.acct-item-under { font-size: 12px; color: var(--color-neutral-700); }
+.acct-item-value { text-align: right; }
+.acct-item-qty { font-size: 12px; color: var(--color-neutral-700); }
+.acct-item-calib { font-size: 12px; font-weight: 600; color: var(--color-accent-700); text-align: right; }
+
+/* Account settings */
+.account-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-neutral-200);
+  background: none;
+  font-size: 14px;
+}
+.account-row-left { display: flex; flex: 1; align-items: center; gap: 8px; min-width: 0; }
+.account-row-value { color: var(--color-neutral-700); white-space: nowrap; }
+.backup { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.backup-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.settings-block { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+
+/* Note for negative share counts or cash */
+.anomaly-card { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; background: var(--color-accent-100); color: var(--color-accent-800); }
+.anomaly-title { font-size: 14px; font-weight: 700; }
+.anomaly-card .text-note { color: var(--color-accent-800); }
+.anomaly-list { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 13px; }
+.anomaly-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }

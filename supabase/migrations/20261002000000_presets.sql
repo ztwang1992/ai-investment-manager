@@ -1,0 +1,76 @@
+-- 阶段 3：扩充全局预置（user_id 为空，所有人只读）。
+-- 覆盖常见的美股 ETF、A 股 ETF、QDII 基金；每个代码都在 2026-10-02 用腾讯、新浪行情核对过名称和价格（scripts/check-presets.mjs）。
+-- 只插入，已有的跳过：重复运行不出错，也不改动原来的 24 个品种。
+
+insert into public.exposures (user_id, id, name, group_id, is_stock, position, updated_at) values
+  (null, 'total_us', '全美股市', 'us', false, 11, '2026-10-02T00:00:00Z'),
+  (null, 'r2000', '罗素 2000', 'us', false, 12, '2026-10-02T00:00:00Z'),
+  (null, 'us_div', '美股红利', 'us', false, 13, '2026-10-02T00:00:00Z'),
+  (null, 'global', '全球股市', 'intl', false, 14, '2026-10-02T00:00:00Z'),
+  (null, 'em', '新兴市场', 'intl', false, 15, '2026-10-02T00:00:00Z'),
+  (null, 'csi500', '中证 500', 'cn', false, 16, '2026-10-02T00:00:00Z'),
+  (null, 'chinext', '创业板', 'cn', false, 17, '2026-10-02T00:00:00Z'),
+  (null, 'star50', '科创 50', 'cn', false, 18, '2026-10-02T00:00:00Z'),
+  (null, 'cn_div', '中证红利', 'cn', false, 19, '2026-10-02T00:00:00Z'),
+  (null, 'hsi', '恒生指数', 'cn', false, 20, '2026-10-02T00:00:00Z'),
+  (null, 'hstech', '恒生科技', 'cn', false, 21, '2026-10-02T00:00:00Z'),
+  (null, 'us_bond', '美国综合债', 'bond', false, 22, '2026-10-02T00:00:00Z'),
+  (null, 'ust_long', '美国长期国债', 'bond', false, 23, '2026-10-02T00:00:00Z'),
+  (null, 'ust_short', '美国短期国债', 'bond', false, 24, '2026-10-02T00:00:00Z'),
+  (null, 'cn_bond', '中国国债', 'bond', false, 25, '2026-10-02T00:00:00Z'),
+  (null, 'reit', '美国房地产', 'other', false, 26, '2026-10-02T00:00:00Z')
+on conflict (user_id, id) do nothing;
+
+insert into public.instruments (user_id, code, name, market, currency, exposure_id, pays_dividend, position, updated_at) values
+  -- 美股 ETF
+  (null, 'SPLG', 'SPDR 投资组合标普500', '美股', 'USD', 'sp500', true, 24, '2026-10-02T00:00:00Z'),
+  (null, 'VTI', 'Vanguard 全美股市', '美股', 'USD', 'total_us', true, 25, '2026-10-02T00:00:00Z'),
+  (null, 'ITOT', 'iShares 全美股市', '美股', 'USD', 'total_us', true, 26, '2026-10-02T00:00:00Z'),
+  (null, 'SCHB', 'Schwab 全美股市', '美股', 'USD', 'total_us', true, 27, '2026-10-02T00:00:00Z'),
+  (null, 'IWM', 'iShares 罗素2000', '美股', 'USD', 'r2000', true, 28, '2026-10-02T00:00:00Z'),
+  (null, 'SCHD', 'Schwab 美股红利', '美股', 'USD', 'us_div', true, 29, '2026-10-02T00:00:00Z'),
+  (null, 'VYM', 'Vanguard 高股息', '美股', 'USD', 'us_div', true, 30, '2026-10-02T00:00:00Z'),
+  (null, 'VT', 'Vanguard 全球股市', '美股', 'USD', 'global', true, 31, '2026-10-02T00:00:00Z'),
+  (null, 'IEFA', 'iShares 发达市场', '美股', 'USD', 'exus', true, 32, '2026-10-02T00:00:00Z'),
+  (null, 'VWO', 'Vanguard 新兴市场', '美股', 'USD', 'em', true, 33, '2026-10-02T00:00:00Z'),
+  (null, 'IEMG', 'iShares 新兴市场', '美股', 'USD', 'em', true, 34, '2026-10-02T00:00:00Z'),
+  (null, 'BND', 'Vanguard 美国全债市', '美股', 'USD', 'us_bond', true, 35, '2026-10-02T00:00:00Z'),
+  (null, 'AGG', 'iShares 美国全债市', '美股', 'USD', 'us_bond', true, 36, '2026-10-02T00:00:00Z'),
+  (null, 'TLT', 'iShares 20年以上美债', '美股', 'USD', 'ust_long', true, 37, '2026-10-02T00:00:00Z'),
+  (null, 'SGOV', 'iShares 0-3个月美债', '美股', 'USD', 'ust_short', true, 38, '2026-10-02T00:00:00Z'),
+  (null, 'BIL', 'SPDR 1-3个月美债', '美股', 'USD', 'ust_short', true, 39, '2026-10-02T00:00:00Z'),
+  (null, 'SHY', 'iShares 1-3年美债', '美股', 'USD', 'ust_short', true, 40, '2026-10-02T00:00:00Z'),
+  (null, 'IAU', 'iShares 黄金', '美股', 'USD', 'gold', false, 41, '2026-10-02T00:00:00Z'),
+  (null, 'GLDM', 'SPDR 迷你黄金', '美股', 'USD', 'gold', false, 42, '2026-10-02T00:00:00Z'),
+  (null, 'VNQ', 'Vanguard 美国房地产', '美股', 'USD', 'reit', true, 43, '2026-10-02T00:00:00Z'),
+  -- A 股 ETF
+  (null, '510330', '沪深300ETF华夏', 'A股', 'CNY', 'csi300', true, 44, '2026-10-02T00:00:00Z'),
+  (null, '159919', '沪深300ETF嘉实', 'A股', 'CNY', 'csi300', true, 45, '2026-10-02T00:00:00Z'),
+  (null, '510500', '中证500ETF南方', 'A股', 'CNY', 'csi500', true, 46, '2026-10-02T00:00:00Z'),
+  (null, '159922', '中证500ETF嘉实', 'A股', 'CNY', 'csi500', true, 47, '2026-10-02T00:00:00Z'),
+  (null, '159915', '创业板ETF易方达', 'A股', 'CNY', 'chinext', true, 48, '2026-10-02T00:00:00Z'),
+  (null, '588000', '科创50ETF华夏', 'A股', 'CNY', 'star50', true, 49, '2026-10-02T00:00:00Z'),
+  (null, '588080', '科创50ETF易方达', 'A股', 'CNY', 'star50', true, 50, '2026-10-02T00:00:00Z'),
+  (null, '510880', '红利ETF华泰柏瑞', 'A股', 'CNY', 'cn_div', true, 51, '2026-10-02T00:00:00Z'),
+  (null, '159920', '恒生ETF华夏', 'A股', 'CNY', 'hsi', true, 52, '2026-10-02T00:00:00Z'),
+  (null, '513180', '恒生科技ETF华夏', 'A股', 'CNY', 'hstech', false, 53, '2026-10-02T00:00:00Z'),
+  (null, '513130', '恒生科技ETF华泰柏瑞', 'A股', 'CNY', 'hstech', false, 54, '2026-10-02T00:00:00Z'),
+  (null, '513300', '纳斯达克ETF华夏', 'A股', 'CNY', 'ndx', false, 55, '2026-10-02T00:00:00Z'),
+  (null, '159632', '纳斯达克ETF华安', 'A股', 'CNY', 'ndx', false, 56, '2026-10-02T00:00:00Z'),
+  (null, '159612', '标普500ETF国泰', 'A股', 'CNY', 'sp500', false, 57, '2026-10-02T00:00:00Z'),
+  (null, '513650', '标普500ETF南方', 'A股', 'CNY', 'sp500', false, 58, '2026-10-02T00:00:00Z'),
+  (null, '518800', '黄金ETF国泰', 'A股', 'CNY', 'gold', false, 59, '2026-10-02T00:00:00Z'),
+  (null, '511010', '国债ETF国泰（5年期）', 'A股', 'CNY', 'cn_bond', false, 60, '2026-10-02T00:00:00Z'),
+  (null, '511260', '十年国债ETF国泰', 'A股', 'CNY', 'cn_bond', false, 61, '2026-10-02T00:00:00Z'),
+  -- 场外基金（QDII 和联接基金）
+  (null, '161125', '易方达标普500 QDII', '场外基金', 'CNY', 'sp500', false, 62, '2026-10-02T00:00:00Z'),
+  (null, '017641', '摩根标普500 QDII', '场外基金', 'CNY', 'sp500', false, 63, '2026-10-02T00:00:00Z'),
+  (null, '018064', '华夏标普500 QDII', '场外基金', 'CNY', 'sp500', false, 64, '2026-10-02T00:00:00Z'),
+  (null, '040046', '华安纳指100 QDII', '场外基金', 'CNY', 'ndx', false, 65, '2026-10-02T00:00:00Z'),
+  (null, '016452', '南方纳指100 QDII', '场外基金', 'CNY', 'ndx', false, 66, '2026-10-02T00:00:00Z'),
+  (null, '006479', '广发纳指100 QDII C', '场外基金', 'CNY', 'ndx', false, 67, '2026-10-02T00:00:00Z'),
+  (null, '110020', '易方达沪深300联接', '场外基金', 'CNY', 'csi300', false, 68, '2026-10-02T00:00:00Z'),
+  (null, '160119', '南方中证500联接', '场外基金', 'CNY', 'csi500', false, 69, '2026-10-02T00:00:00Z'),
+  (null, '000071', '华夏恒生联接', '场外基金', 'CNY', 'hsi', false, 70, '2026-10-02T00:00:00Z'),
+  (null, '002611', '博时黄金联接C', '场外基金', 'CNY', 'gold', false, 71, '2026-10-02T00:00:00Z')
+on conflict (user_id, code) do nothing;

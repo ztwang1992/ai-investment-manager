@@ -1,0 +1,6 @@
+/* Sign-in page: no tab bar; the content fills the screen */
+.login-main { bottom: 0; }
+.login { gap: 14px; padding-top: 48px; }
+.login .btn-primary { align-self: flex-start; }
+.login-code { letter-spacing: 0.3em; font-variant-numeric: tabular-nums; }
+.login-links { display: flex; gap: 8px; flex-wrap: wrap; }

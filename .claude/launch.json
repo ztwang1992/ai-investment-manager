@@ -1,0 +1,70 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "dev-5199",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "--port",
+        "5199",
+        "--strictPort"
+      ],
+      "port": 5199
+    },
+    {
+      "name": "preview-5198",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "preview",
+        "--port",
+        "5198",
+        "--strictPort"
+      ],
+      "port": 5198
+    },
+    {
+      "name": "worker-local",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "wrangler",
+        "dev",
+        "--config",
+        "worker/wrangler.jsonc",
+        "--port",
+        "8787",
+        "--ip",
+        "127.0.0.1"
+      ],
+      "port": 8787
+    },
+    {
+      "name": "demo-no-cloud",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "VITE_SUPABASE_URL= VITE_SUPABASE_ANON_KEY= VITE_API_BASE= npx vite --port 5195 --strictPort"
+      ],
+      "port": 5195
+    },
+    {
+      "name": "app-local-worker",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "VITE_API_BASE=http://127.0.0.1:8787 npx vite --port 5196 --strictPort"
+      ],
+      "port": 5196
+    }
+  ]
+}

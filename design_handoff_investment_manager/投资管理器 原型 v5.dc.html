@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-0de07f1b-6218-45cc-b682-d10884a79d30/styles.css">
+<script src="_ds/organic-0de07f1b-6218-45cc-b682-d10884a79d30/_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--color-neutral-200);font-family:var(--font-body);color:var(--color-text)}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}*{box-sizing:border-box}::-webkit-scrollbar{display:none}.btn,.tag{white-space:nowrap;flex:none}@keyframes spin{to{transform:rotate(360deg)}}@keyframes blink{0%,100%{opacity:.25}50%{opacity:1}}</style>
+</helmet>
+<div style="min-height:100vh;display:grid;place-items:center;padding:24px">
+<div data-screen-label="{{ screenLabel }}" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--color-bg);box-shadow:var(--shadow-lg)">
+
+<div data-main="1" style="position:absolute;inset:0 0 78px 0;overflow-y:auto;scrollbar-width:none" onPointerDown="{{ pullDown }}" onPointerMove="{{ pullMove }}" onPointerUp="{{ pullUp }}" onPointerLeave="{{ pullUp }}">
+
+<sc-if value="{{ isPerf }}" hint-placeholder-val="{{ true }}">
+<div style="{{ pullStyle }}"><span style="font-size:12px;color:var(--color-neutral-700)">{{ pullText }}</span></div>
+<div style="padding:24px 20px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-family:var(--font-heading);font-size:26px">收益</span>
+<button class="btn btn-secondary btn-icon" onClick="{{ toggleHide }}" aria-label="显示或隐藏金额">
+<sc-if value="{{ hideAmt }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"></path><path d="m2 2 20 20"></path></svg></sc-if>
+<sc-if value="{{ showAmt }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path><circle cx="12" cy="12" r="3"></circle></svg></sc-if>
+</button>
+</div>
+<div style="display:flex;gap:8px;align-items:center">
+<select class="input" style="width:auto;flex:none" value="{{ range }}" onChange="{{ setRange }}"><sc-for list="{{ rangeList }}" as="r"><option value="{{ r }}">{{ r }}</option></sc-for></select>
+<div class="seg" style="flex:none"><sc-for list="{{ perfCcyOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="pc" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+</div>
+<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-neutral-700)">
+<sc-if value="{{ refreshing }}"><span style="width:10px;height:10px;border-radius:999px;border:2px solid var(--color-neutral-400);border-top-color:var(--color-accent);animation:spin .8s linear infinite"></span></sc-if>
+<span>{{ updatedText }}</span>
+</div>
+
+<sc-if value="{{ isFresh }}"><div style="background:var(--color-neutral-100);border-radius:var(--radius-lg);padding:22px;display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:var(--color-neutral-700)">总资产 · 当前</span><span style="font-size:32px;font-weight:700">{{ totalTxt }}</span><span style="font-size:14px;line-height:1.6;color:var(--color-neutral-800)">收益曲线从今天开始积累。每天收盘后记录一次总资产，几天后就能看到走势；入金和出金会在本金线上标出。</span></div></sc-if>
+<sc-if value="{{ hasHist }}">
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:13px;color:var(--color-neutral-700)">{{ perf.label }}</span>
+<span style="font-size:32px;font-weight:700;line-height:1.1">{{ perf.big }}</span>
+<span style="{{ perf.gainStyle }}">{{ perf.gainLine }}</span>
+<span style="font-size:13px;color:var(--color-neutral-700)">{{ perf.subLine }}</span>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="width:350px;overflow-x:auto;scrollbar-width:none" data-chart="1">
+<div style="{{ perf.innerStyle }}" onPointerMove="{{ perf.move }}" onPointerLeave="{{ perf.leave }}">
+<svg width="{{ perf.W }}" height="170" viewBox="{{ perf.viewBox }}" style="display:block;overflow:visible">
+<path d="{{ perf.area }}" fill="var(--color-accent-100)"></path>
+<path d="{{ perf.pLine }}" fill="none" stroke="var(--color-neutral-500)" stroke-width="2" stroke-dasharray="4 4" stroke-linejoin="round"></path>
+<path d="{{ perf.vLine }}" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+<sc-for list="{{ perf.events }}" as="e"><circle cx="{{ e.x }}" cy="{{ e.y }}" r="5" fill="{{ e.fill }}" stroke="var(--color-bg)" stroke-width="2"></circle></sc-for>
+<line x1="{{ perf.hx }}" x2="{{ perf.hx }}" y1="0" y2="150" stroke="var(--color-neutral-400)" stroke-width="1.5"></line>
+<circle cx="{{ perf.hx }}" cy="{{ perf.hvy }}" r="5.5" fill="var(--color-accent)" stroke="var(--color-bg)" stroke-width="2.5"></circle>
+</svg>
+<sc-for list="{{ perf.ticks }}" as="t"><span style="{{ t.style }}">{{ t.label }}</span></sc-for>
+</div>
+</div>
+<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--color-neutral-700)">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;border-radius:2px;background:var(--color-accent)"></span>总资产</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed var(--color-neutral-500)"></span>净投入本金</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--color-accent-2)"></span>入金</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--color-accent)"></span>出金</span>
+<sc-if value="{{ perf.scrollable }}"><span>← 左右滑动查看更早</span></sc-if>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:14px 16px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--color-neutral-700)">区间收益率</span><span style="{{ perf.pctStyle }}">{{ perf.rangePct }}</span></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:14px 16px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--color-neutral-700)">区间净投入</span><span style="font-weight:700;font-size:17px">{{ perf.rangeIn }}</span></div>
+</div>
+
+<sc-if value="{{ perf.hasFlows }}">
+<div style="display:flex;flex-direction:column;gap:6px">
+<span style="font-weight:700;font-size:15px">区间资金进出</span>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:2px 16px">
+<sc-for list="{{ perf.flows }}" as="f"><div style="display:flex;justify-content:space-between;padding:9px 0;font-size:13px;border-bottom:1px solid var(--color-neutral-200)"><span style="display:flex;align-items:center;gap:8px"><span style="{{ f.dotStyle }}"></span>{{ f.date }} · {{ f.kind }}</span><span style="font-weight:600">{{ f.amt }}</span></div></sc-for>
+</div>
+<span style="font-size:12px;line-height:1.5;color:var(--color-neutral-700)">本金线只随「入金 / 出金」变化。组合内部的买卖（再平衡、换仓）不改变本金，卖出只有把钱转出组合时，本金线才会下降。</span>
+</div>
+</sc-if>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<span style="font-weight:700;font-size:17px">各资产表现 · {{ range }}</span>
+<sc-for list="{{ catPnl }}" as="c" hint-placeholder-count="6">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;font-size:14px"><span style="display:flex;align-items:center;gap:8px"><span style="{{ c.dotStyle }}"></span>{{ c.name }}</span><span style="{{ c.txtStyle }}">{{ c.label }}</span></div>
+<div style="height:8px;border-radius:999px;background:var(--color-neutral-200)"><div style="{{ c.barStyle }}"></div></div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPlan }}">
+<div style="padding:28px 20px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-heading);font-size:26px">计划</span><button class="btn btn-secondary" onClick="{{ openPortfolio }}">设置组合</button></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-lg);padding:22px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<span style="font-size:13px;color:var(--color-neutral-700)">按当前资产预计达成退休目标</span>
+<span style="font-family:var(--font-heading);font-size:46px;line-height:1">{{ goal.year }} 年</span>
+<span style="font-size:13px;color:var(--color-neutral-700)">总资产 {{ goal.total }} · 年化 {{ goal.ret }}% · 通胀 {{ goal.infl }}%</span>
+</div>
+<div style="position:relative;height:10px;border-radius:999px;background:var(--color-neutral-300)"><div style="{{ goal.fillStyle }}"></div><div style="{{ goal.mark4Style }}"></div><div style="{{ goal.markTStyle }}"></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--color-neutral-700)">4% 法则 · 年支出 {{ goal.spend }}</span><span style="font-weight:700;font-size:16px">{{ goal.need4 }}</span><span style="font-size:12px;color:var(--color-neutral-700)">完成 {{ goal.pct4 }}% · {{ goal.year4 }}</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--color-neutral-700)">我设定的目标</span><span style="font-weight:700;font-size:16px">{{ goal.target }}</span><span style="font-size:12px;color:var(--color-neutral-700)">完成 {{ goal.pctT }}% · {{ goal.year }}</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;padding:6px 2px 0">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:17px">组合配置</span><span class="{{ offTagClass }}">{{ offTagText }}</span></div>
+<div style="display:flex;height:12px;border-radius:999px;overflow:hidden;gap:2px"><sc-for list="{{ slots }}" as="c"><div style="{{ c.segStyle }}"></div></sc-for></div>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ slots }}" as="c" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:12px minmax(0,1fr) auto 48px;gap:10px;align-items:center;padding:8px 0;font-size:15px">
+<span style="{{ c.dotStyle }}"></span><span style="display:flex;align-items:center;gap:6px;white-space:nowrap">{{ c.name }}<sc-if value="{{ c.untargeted }}"><span class="tag tag-accent">未定义</span></sc-if></span><span style="color:var(--color-neutral-700);font-size:13px;white-space:nowrap">{{ c.curTxt }}% / {{ c.tgtTxt }}</span><span style="{{ c.diffStyle }}">{{ c.diffTxt }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:700">资金进出</span>
+<span style="font-size:14px;line-height:1.55;color:var(--color-neutral-800)">有新钱时只买不卖，用增量补低配；取钱时先卖超配最多的。</span>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ openDep }}">投入一笔钱</button><button class="btn btn-secondary" onClick="{{ openWd }}">取钱</button></div>
+</div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-weight:700">再平衡</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ nextCheck }}</span></div>
+<span style="font-size:14px;line-height:1.55;color:var(--color-neutral-800)">{{ rebalSummary }}</span>
+<div style="display:flex;gap:8px"><button class="btn btn-secondary" onClick="{{ openRebal }}">查看调整步骤</button></div>
+</div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-weight:700">持仓校准</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ calibNext }}</span></div>
+<span style="font-size:14px;line-height:1.55;color:var(--color-neutral-800)">{{ calibSummary }}</span>
+<sc-if value="{{ calibHasDue }}"><div style="display:flex;gap:8px"><button class="btn btn-secondary" onClick="{{ openCalibList }}">开始校准</button></div></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHold }}">
+<div style="padding:28px 20px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-heading);font-size:26px">持仓</span><button class="btn btn-secondary" onClick="{{ openAccounts }}">设置账户</button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+<div class="seg" style="flex:none"><sc-for list="{{ holdViews }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="hv" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+<span style="font-weight:700;white-space:nowrap">{{ totalTxt }}</span>
+</div>
+<sc-if value="{{ isAssetView }}">
+<div style="display:flex;flex-direction:column;gap:20px">
+<sc-for list="{{ assetGroups }}" as="g">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px"><span style="display:flex;align-items:center;gap:8px;font-weight:700"><span style="{{ g.dotStyle }}"></span>{{ g.name }}</span><span style="font-size:13px;color:var(--color-neutral-700)">{{ g.value }} · {{ g.pct }}%</span></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);overflow:hidden">
+<sc-for list="{{ g.unders }}" as="u">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;cursor:pointer" onClick="{{ u.toggle }}">
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">{{ u.name }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ u.sub }}</span></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none"><span style="font-weight:600">{{ u.value }}</span><span style="{{ u.pnlStyle }}">{{ u.pnl }}</span></div>
+</div>
+<sc-if value="{{ u.open }}">
+<div style="padding:0 12px 12px;display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ u.insts }}" as="i">
+<div style="background:var(--color-bg);border-radius:14px;overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 14px;cursor:pointer" onClick="{{ i.toggle }}">
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ i.code }} <span style="font-weight:400;color:var(--color-neutral-700)">{{ i.name }}</span></span><span style="font-size:12px;color:var(--color-neutral-700)">{{ i.sub }}</span></div>
+<span style="font-size:14px;font-weight:600;flex:none">{{ i.value }}</span>
+</div>
+<sc-if value="{{ i.open }}">
+<div style="padding:0 14px 10px;display:flex;flex-direction:column">
+<sc-for list="{{ i.plats }}" as="p"><div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:8px;padding:7px 0;font-size:13px;border-top:1px solid var(--color-neutral-200);cursor:pointer" onClick="{{ p.calib }}"><span>{{ p.acct }}</span><span style="color:var(--color-neutral-700)">{{ p.qty }} @ {{ p.cost }}</span><span>{{ p.value }}</span></div></sc-for>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ isAcctView }}">
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<span style="font-size:13px;color:var(--color-neutral-700)">资产分布在 {{ acctCount }} 个账户</span>
+<div style="display:flex;height:16px;border-radius:999px;overflow:hidden;gap:2px"><sc-for list="{{ acctShareSegs }}" as="g"><div style="{{ g.style }}"></div></sc-for></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ accountGroups }}" as="a">
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:14px 16px;display:flex;flex-direction:column;gap:10px;cursor:pointer" onClick="{{ a.open }}">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+<div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1"><span style="{{ a.dotStyle }}"></span><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600;white-space:nowrap">{{ a.name }}</span><span style="font-size:12px;color:var(--color-neutral-700);white-space:nowrap">{{ a.meta }} · {{ a.count }} 个品种</span></div></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none;white-space:nowrap"><span style="font-weight:600">{{ a.value }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ a.share }}%</span></div>
+</div>
+<div style="display:flex;height:6px;border-radius:999px;overflow:hidden;gap:2px;background:var(--color-neutral-200)"><sc-for list="{{ a.barSegs }}" as="b"><div style="{{ b.style }}"></div></sc-for></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--color-neutral-700)"><sc-for list="{{ groupLegend }}" as="c"><span style="display:flex;align-items:center;gap:6px"><span style="{{ c.dotStyle }}"></span>{{ c.name }}</span></sc-for></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRec }}">
+<div style="padding:28px 20px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-heading);font-size:26px">记录</span><button class="btn btn-primary" onClick="{{ openAdd }}">记一笔</button></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none"><sc-for list="{{ recTimeOpts }}" as="o"><button style="{{ o.style }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+<div style="overflow-x:auto;scrollbar-width:none"><div class="seg"><sc-for list="{{ recTypeOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="rt" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:12px;color:var(--color-neutral-700)">{{ recCount }}</span><button class="btn btn-ghost" style="font-size:13px" onClick="{{ toggleSort }}">{{ sortLabel }}</button></div>
+</div>
+<sc-if value="{{ recEmpty }}"><span style="font-size:14px;color:var(--color-neutral-700);padding:24px 0;text-align:center">这个时间段没有符合条件的记录</span></sc-if>
+<sc-for list="{{ txGroups }}" as="gr">
+<div style="display:flex;flex-direction:column;gap:6px">
+<span style="font-size:13px;font-weight:700;color:var(--color-neutral-700);padding:0 4px">{{ gr.label }}</span>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 16px">
+<sc-for list="{{ gr.items }}" as="t">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--color-neutral-200)">
+<span style="font-weight:600;font-size:15px">{{ t.title }}</span><span style="{{ t.typeStyle }}">{{ t.type }}</span>
+<span style="font-size:12px;color:var(--color-neutral-700)">{{ t.meta }}</span><span style="font-size:13px;text-align:right">{{ t.amount }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{ isAI }}">
+<div style="position:absolute;inset:0 0 78px 0;background:var(--color-bg);display:flex;flex-direction:column">
+<sc-if value="{{ aiOnboard }}">
+<div style="padding:28px 20px 24px;display:flex;flex-direction:column;gap:18px;overflow-y:auto">
+<span style="font-family:var(--font-heading);font-size:26px">AI 投顾</span>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-lg);padding:22px;display:flex;flex-direction:column;gap:14px">
+<span style="width:48px;height:48px;border-radius:999px;background:var(--color-accent-2-200);color:var(--color-accent-2-900);display:grid;place-items:center;font-weight:700">AI</span>
+<span style="font-weight:700;font-size:18px">连接你自己的大模型</span>
+<span style="font-size:14px;line-height:1.6;color:var(--color-neutral-800)">填入 API Key 后，AI 投顾可以读取你的计划、持仓和收益，结合联网信息分析组合。</span>
+<div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.5;color:var(--color-neutral-700)">
+<span>· Key 只加密保存在本机，不上传到我们的服务器</span>
+<span>· 对话时，数据直接从手机发给你选的模型服务商</span>
+<span>· 随时可以在这里断开或更换</span>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:var(--color-neutral-700)">模型服务商</span>
+<sc-for list="{{ provList }}" as="p"><button style="{{ p.style }}" onClick="{{ p.pick }}" disabled="{{ p.disabled }}"><span style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0"><span style="font-weight:700;font-size:15px">{{ p.name }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ p.desc }}</span></span><span class="{{ p.tagClass }}">{{ p.tag }}</span></button></sc-for>
+</div>
+<div class="field"><label>接口地址（OpenAI 兼容格式）</label><input class="input" value="{{ ai.base }}" onChange="{{ setBase }}"></div>
+<div class="field"><label>模型</label><input class="input" value="{{ ai.model }}" onChange="{{ setModel }}"></div>
+<div class="field"><label>API Key</label><input class="input" type="password" placeholder="sk-…" value="{{ ai.key }}" onChange="{{ setKey }}"></div>
+<sc-if value="{{ aiStatusShow }}"><div style="{{ aiStatusStyle }}"><span style="font-weight:700;font-size:14px">{{ aiStatusTitle }}</span><span style="font-size:13px;line-height:1.5">{{ aiStatusMsg }}</span></div></sc-if>
+<label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" checked="{{ consentOn }}" onChange="{{ toggleConsent }}" style="margin-top:3px;accent-color:var(--color-accent)"><span>我同意在对话时，把计划、持仓、收益的汇总数据发送给 DeepSeek 用于分析。不会发送账户号和登录信息。</span></label>
+<div style="display:flex;gap:8px"><button class="btn btn-secondary" onClick="{{ testAI }}" disabled="{{ aiTesting }}">{{ testLabel }}</button><button class="btn btn-primary" onClick="{{ connectAI }}" disabled="{{ aiNotOk }}">开始对话</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ aiChat }}">
+<div style="padding:18px 16px 10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--color-neutral-200)">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;min-width:0"><button class="btn btn-secondary btn-icon" onClick="{{ openDrawer }}" aria-label="历史对话"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M9 3v18"></path></svg></button><span style="font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="color:var(--color-neutral-500)">#</span> {{ convTitle }}</span></div>
+<button class="btn btn-ghost" style="font-size:13px" onClick="{{ newConv }}">+ 新对话</button>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="tag tag-accent-2">已读取 计划 · 持仓 · 收益</span><span class="tag tag-neutral">{{ ai.provider }}</span><button class="{{ webClass }}" style="cursor:pointer;border:0;font:inherit;font-size:11px" onClick="{{ toggleWeb }}">{{ webText }}</button></div>
+</div>
+<div data-msgs="1" style="flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 16px;display:flex;flex-direction:column;gap:16px">
+<sc-for list="{{ msgs }}" as="m">
+<div style="display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px">
+<span style="{{ m.avStyle }}">{{ m.av }}</span>
+<div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+<div style="display:flex;gap:8px;align-items:baseline"><span style="font-weight:700;font-size:14px">{{ m.name }}</span><span style="font-size:11px;color:var(--color-neutral-600)">{{ m.time }}</span></div>
+<span style="font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word">{{ m.text }}</span>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ ai.busy }}"><div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--color-neutral-700)"><span style="width:8px;height:8px;border-radius:999px;background:var(--color-accent-2);animation:blink 1s infinite"></span>AI 投顾正在分析{{ webHint }}…</div></sc-if>
+</div>
+<sc-if value="{{ showSuggest }}"><div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0 16px 8px"><sc-for list="{{ suggests }}" as="q"><button class="btn btn-secondary" style="flex:none;font-size:13px;min-height:32px" onClick="{{ q.send }}">{{ q.text }}</button></sc-for></div></sc-if>
+<div style="padding:8px 12px 12px;display:flex;gap:8px;align-items:center">
+<input class="input" style="flex:1;min-height:44px" placeholder="问问你的组合…" value="{{ ai.input }}" onChange="{{ setInput }}" onKeyDown="{{ inputKey }}">
+<button class="btn btn-primary btn-icon" style="width:44px;height:44px;flex:none" onClick="{{ sendMsg }}" aria-label="发送"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg></button>
+</div>
+</sc-if>
+<sc-if value="{{ ai.drawer }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex" onClick="{{ closeDrawer }}">
+<div style="width:286px;height:100%;background:var(--color-bg);border-radius:0 28px 28px 0;padding:22px 14px 16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-lg)" onClick="{{ stop }}">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:0 4px"><span style="font-family:var(--font-heading);font-size:20px">历史对话</span><button class="btn btn-primary" style="font-size:13px;min-height:32px" onClick="{{ newConv }}">+ 新对话</button></div>
+<div style="flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ convList }}" as="c"><button style="{{ c.style }}" onClick="{{ c.pick }}"><span style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ c.title }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ c.meta }}</span></button></sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 4px 0;border-top:1px solid var(--color-neutral-200)"><span style="font-size:12px;color:var(--color-neutral-700);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ connLabel }}</span><button class="btn btn-ghost" style="font-size:13px" onClick="{{ disconnectAI }}">更换 Key</button></div>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<div style="position:absolute;left:0;right:0;bottom:0;height:78px;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px 18px;background:var(--color-bg);border-top:1px solid var(--color-neutral-200)">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.go }}" style="{{ t.style }}"><span style="{{ t.dotStyle }}"></span>{{ t.name }}</button></sc-for>
+</div>
+
+<sc-if value="{{ subPortfolio }}">
+<div style="position:absolute;inset:0;background:var(--color-bg);overflow-y:auto;scrollbar-width:none">
+<div style="padding:20px 20px 40px;display:flex;flex-direction:column;gap:22px">
+<button class="btn btn-ghost" style="align-self:flex-start;padding-left:0" onClick="{{ closeSub }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>计划</button>
+<span style="font-family:var(--font-heading);font-size:26px">设置组合</span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:700">显示币种</span>
+<div class="seg" style="align-self:flex-start"><sc-for list="{{ ccyOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="ccy" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+<span style="font-size:12px;color:var(--color-neutral-700)">{{ fxText }} · 成本按当前汇率换算</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700">目标组合</span><sc-if value="{{ tView }}"><button class="btn btn-secondary" style="min-height:32px;font-size:13px" onClick="{{ startEditT }}">编辑</button></sc-if><sc-if value="{{ tEditing }}"><span class="tag tag-accent">编辑中</span></sc-if></div>
+<span style="font-size:12px;color:var(--color-neutral-700);line-height:1.5">目标设在底层资产上，合计需要等于 100%。</span>
+<sc-if value="{{ tView }}">
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 16px">
+<sc-for list="{{ tViewRows }}" as="r"><div style="display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid var(--color-neutral-200)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="{{ r.dotStyle }}"></span>{{ r.name }}</span><span style="font-weight:700">{{ r.pct }}%</span></div><div style="height:4px;border-radius:999px;background:var(--color-neutral-200)"><div style="{{ r.barStyle }}"></div></div></div></sc-for>
+<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px"><span style="color:var(--color-neutral-700)">合计</span><span style="{{ sumStyle }}">{{ targetSum }}%</span></div>
+</div>
+</sc-if>
+<sc-if value="{{ tEditing }}">
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 14px">
+<sc-for list="{{ tEditRows }}" as="r">
+<div style="display:flex;flex-direction:column;gap:8px;padding:8px 0;border-bottom:1px solid var(--color-neutral-200)">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+<span style="display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="{{ r.dotStyle }}"></span>{{ r.name }}</span>
+<div style="display:flex;align-items:center;gap:4px;flex:none"><input class="input" type="number" inputmode="decimal" style="{{ r.inputStyle }}" value="{{ r.val }}" onChange="{{ r.change }}"><span style="font-weight:700;width:16px">%</span><button class="btn btn-ghost btn-icon" style="color:var(--color-neutral-600)" onClick="{{ r.del }}" aria-label="移除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+</div>
+<sc-if value="{{ r.isBucket }}"><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ r.chips }}" as="c"><button class="btn btn-secondary" style="min-height:28px;padding:2px 12px;font-size:12px" onClick="{{ c.toggle }}">{{ c.label }}</button></sc-for></div></sc-if>
+<sc-if value="{{ r.isOwn }}"><button class="btn btn-ghost" style="align-self:flex-start;font-size:12px;min-height:28px" onClick="{{ r.merge }}">并回个股合计</button></sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ draftEmpty }}"><span style="display:block;padding:12px 0;font-size:13px;color:var(--color-neutral-700)">还没有目标，点下面的「+ 添加目标资产」</span></sc-if>
+<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px"><span style="color:var(--color-neutral-700)">合计</span><span style="{{ draftSumStyle }}">{{ draftSum }}%</span></div>
+</div>
+<sc-if value="{{ draftMsg }}"><span style="{{ draftMsgStyle }}">{{ draftMsg }}</span></sc-if>
+<button class="btn btn-secondary" style="align-self:flex-start" onClick="{{ openAddTarget }}">+ 添加目标资产</button>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ saveT }}" disabled="{{ draftInvalid }}">保存</button><button class="btn btn-secondary" onClick="{{ cancelT }}">取消</button></div>
+</sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:700">未定义</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ undefCount }}</span></div>
+<span style="font-size:12px;color:var(--color-neutral-700);line-height:1.5">有持仓、但不在目标组合里的资产。从目标里移除的持仓也会出现在这里。</span>
+<sc-if value="{{ hasUndef }}">
+<div class="seg" style="align-self:flex-start"><sc-for list="{{ undefModeOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="um" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 14px">
+<sc-for list="{{ undefRows }}" as="u"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--color-neutral-200)"><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="display:flex;align-items:center;gap:8px;white-space:nowrap"><span style="{{ u.dotStyle }}"></span>{{ u.name }}</span><span style="font-size:12px;color:var(--color-neutral-700);padding-left:18px">{{ u.sub }}</span></span><button class="btn btn-secondary" style="min-height:32px;font-size:13px" onClick="{{ u.add }}">加入目标</button></div></sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ noUndef }}"><span style="font-size:13px;color:var(--color-neutral-700)">所有持仓都在目标组合里。</span></sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:700">再平衡规则</span>
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">偏离阈值</span><div style="display:flex;align-items:center;gap:6px"><button class="btn btn-secondary btn-icon" onClick="{{ thDec }}">−</button><span style="width:48px;text-align:center;font-weight:700">±{{ threshold }}%</span><button class="btn btn-secondary btn-icon" onClick="{{ thInc }}">+</button></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">定期检查</span><div class="seg"><sc-for list="{{ periodOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="pd" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">持仓校准提醒</span><div class="seg"><sc-for list="{{ calibPeriodOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="cp" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div></div>
+<span style="font-size:12px;line-height:1.5;color:var(--color-neutral-700)">持仓占比 ≥ 3% 或有红利再投的品种，每个周期提醒一次核对券商份额。</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:700">长期目标</span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><sc-for list="{{ goalFields }}" as="f"><div class="field"><label>{{ f.label }}</label><input class="input" type="number" value="{{ f.value }}" onChange="{{ f.change }}"></div></sc-for></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ subAccounts }}">
+<div style="position:absolute;inset:0;background:var(--color-bg);overflow-y:auto;scrollbar-width:none">
+<div style="padding:20px 20px 40px;display:flex;flex-direction:column;gap:18px">
+<button class="btn btn-ghost" style="align-self:flex-start;padding-left:0" onClick="{{ closeSub }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>持仓</button>
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-heading);font-size:26px">设置账户</span><button class="btn btn-primary" onClick="{{ openAddAcct }}">+ 添加账户</button></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 14px">
+<sc-for list="{{ accountGroups }}" as="a"><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 0;font-size:14px;border-bottom:1px solid var(--color-neutral-200);cursor:pointer" onClick="{{ a.open }}"><span style="display:flex;align-items:center;gap:8px;min-width:0;flex:1"><span style="{{ a.dotStyle }}"></span><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600;white-space:nowrap">{{ a.name }}</span><span style="font-size:12px;color:var(--color-neutral-700);white-space:nowrap">{{ a.meta }} · {{ a.count }} 个品种</span></span></span><span style="color:var(--color-neutral-700);white-space:nowrap">{{ a.value }} ›</span></div></sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;padding-top:8px"><span style="font-weight:700">数据备份</span><span style="font-size:12px;color:var(--color-neutral-700);line-height:1.5">数据已通过云端同步。也可以导出一份到本地留存。</span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-secondary" onClick="{{ exportJSON }}">导出完整备份（JSON）</button><button class="btn btn-secondary" onClick="{{ exportCSV }}">导出流水（CSV）</button></div></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetDep }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;max-height:90%;overflow-y:auto;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:var(--font-heading);font-size:22px">投入一笔钱</span><span style="font-size:13px;color:var(--color-neutral-700)">只买不卖，优先补低配；会记为一笔入金，只推荐同币种的品种</span></div>
+<div style="display:flex;gap:10px;align-items:flex-end">
+<div class="seg" style="flex:none"><sc-for list="{{ depCcyOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="dc" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+<div class="field" style="flex:1;min-width:0"><label>金额（{{ depSym }}）</label><input class="input" type="number" value="{{ dep.amount }}" onChange="{{ setDepAmt }}"></div>
+</div>
+<div class="seg" style="align-self:flex-start"><sc-for list="{{ depModeOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="dm" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+<sc-if value="{{ depAcctMode }}"><div class="field"><label>钱在哪个账户</label><select class="input" value="{{ dep.acct }}" onChange="{{ setDepAcct }}"><sc-for list="{{ depAcctOpts }}" as="a"><option value="{{ a.id }}">{{ a.name }}</option></sc-for></select></div></sc-if>
+<sc-if value="{{ depHas }}">
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 16px">
+<sc-for list="{{ depLines }}" as="l">
+<div style="display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--color-neutral-200)">
+<span style="{{ l.dotStyle }}"></span><span style="font-weight:600;font-size:15px">{{ l.name }}</span><span style="font-weight:700;text-align:right">{{ l.amt }}</span>
+<span></span><span style="font-size:12px;color:var(--color-neutral-700)">{{ l.sub }}</span><span style="font-size:12px;color:var(--color-accent-2-800);text-align:right;white-space:nowrap">{{ l.move }}</span>
+</div>
+</sc-for>
+</div>
+<span style="font-size:13px;color:var(--color-neutral-800)">{{ depSummary }}</span>
+</sc-if>
+<sc-if value="{{ depNote }}"><span style="font-size:12px;line-height:1.5;color:var(--color-accent-800)">{{ depNote }}</span></sc-if>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ applyDep }}">按此记录买入</button><button class="btn btn-secondary" onClick="{{ closeSheet }}">关闭</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetWd }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;max-height:90%;overflow-y:auto;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:var(--font-heading);font-size:22px">取钱</span><span style="font-size:13px;color:var(--color-neutral-700)">先卖超配最多的，只从同币种持仓里卖</span></div>
+<div style="display:flex;gap:10px;align-items:flex-end">
+<div class="seg" style="flex:none"><sc-for list="{{ wdCcyOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="wc" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+<div class="field" style="flex:1;min-width:0"><label>金额（{{ wdSym }}）</label><input class="input" type="number" value="{{ wd.amount }}" onChange="{{ setWdAmt }}"></div>
+</div>
+<sc-if value="{{ wdHas }}">
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 16px">
+<sc-for list="{{ wdLines }}" as="l">
+<div style="display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--color-neutral-200)">
+<span style="{{ l.dotStyle }}"></span><span style="font-weight:600;font-size:15px">{{ l.name }}</span><span style="font-weight:700;text-align:right">{{ l.amt }}</span>
+<span></span><span style="font-size:12px;color:var(--color-neutral-700)">{{ l.sub }}</span><span style="font-size:12px;color:var(--color-accent-800);text-align:right;white-space:nowrap">{{ l.move }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ wdErr }}"><span style="font-size:13px;color:var(--color-accent-800)">{{ wdErr }}</span></sc-if>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ applyWd }}">按此记录卖出</button><button class="btn btn-secondary" onClick="{{ closeSheet }}">关闭</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetRebal }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;max-height:90%;overflow-y:auto;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<span style="font-family:var(--font-heading);font-size:22px">调整步骤</span>
+<span style="font-size:13px;color:var(--color-neutral-700)">按目标组合回到均衡，金额为估算值。没有新钱时用这个；有新钱时优先用「投入一笔钱」。</span>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 16px">
+<sc-for list="{{ rebalSteps }}" as="r"><div style="display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--color-neutral-200)"><span class="{{ r.tagClass }}">{{ r.action }}</span><span>{{ r.name }}</span><span style="font-weight:700">{{ r.amount }}</span></div></sc-for>
+</div>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ markDone }}">标记已完成</button><button class="btn btn-secondary" onClick="{{ closeSheet }}">关闭</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetAdd }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<span style="font-family:var(--font-heading);font-size:22px">记一笔</span>
+<div class="seg" style="align-self:flex-start"><sc-for list="{{ typeOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="tp" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div>
+<div class="field"><label>账户</label><select class="input" value="{{ form.acct }}" onChange="{{ setAcct }}"><sc-for list="{{ acctOpts }}" as="a"><option value="{{ a.id }}">{{ a.name }}</option></sc-for></select></div>
+<sc-if value="{{ isTradeForm }}">
+<div class="field"><label>代码</label><input class="input" placeholder="如 VOO、513500、050025" value="{{ form.code }}" onChange="{{ setCode }}"></div>
+<sc-if value="{{ recOk }}"><span class="tag tag-accent-2" style="align-self:flex-start">{{ recText }}</span></sc-if>
+<sc-if value="{{ needUnder }}"><div class="field"><label>未识别，选择底层资产</label><select class="input" value="{{ form.under }}" onChange="{{ setUnder }}"><sc-for list="{{ underOpts }}" as="u"><option value="{{ u.id }}">{{ u.name }}</option></sc-for></select></div></sc-if>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+<div class="field"><label>数量</label><input class="input" type="number" value="{{ form.qty }}" onChange="{{ setQty }}"></div>
+<div class="field"><label>成交价 {{ formCcy }}</label><input class="input" type="number" value="{{ form.price }}" onChange="{{ setPrice }}"></div>
+<div class="field"><label>手续费</label><input class="input" type="number" placeholder="可选" value="{{ form.fee }}" onChange="{{ setFee }}"></div>
+</div>
+<span style="font-size:12px;line-height:1.5;color:var(--color-neutral-700)">{{ tradeHint }}</span>
+</sc-if>
+<sc-if value="{{ isCashForm }}">
+<div class="field"><label>金额（{{ cashSym }}）</label><input class="input" type="number" value="{{ form.amount }}" onChange="{{ setAmount }}"></div>
+<span style="font-size:12px;line-height:1.5;color:var(--color-neutral-700)">{{ cashHint }}</span>
+</sc-if>
+<sc-if value="{{ formErr }}"><span style="font-size:13px;color:var(--color-accent-800)">{{ formErr }}</span></sc-if>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ save }}">保存</button><button class="btn btn-secondary" onClick="{{ closeSheet }}">取消</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetAcct }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;max-height:88%;overflow-y:auto;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:16px" onClick="{{ stop }}">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:var(--font-heading);font-size:22px">{{ acctDetail.name }}</span><span style="font-size:13px;color:var(--color-neutral-700)">{{ acctDetail.meta }} · 占总资产 {{ acctDetail.share }}%</span></div>
+<div style="display:flex;align-items:center;gap:20px">
+<div style="{{ acctDetail.donutStyle }}"><div style="width:96px;height:96px;border-radius:999px;background:var(--color-bg);display:flex;flex-direction:column;align-items:center;justify-content:center"><span style="font-size:11px;color:var(--color-neutral-700)">市值</span><span style="font-weight:700;font-size:15px">{{ acctDetail.value }}</span></div></div>
+<div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:0">
+<sc-for list="{{ acctDetail.legend }}" as="l"><div style="display:flex;justify-content:space-between;font-size:13px"><span style="display:flex;align-items:center;gap:6px"><span style="{{ l.dotStyle }}"></span>{{ l.name }}</span><span style="font-weight:600">{{ l.pct }}%</span></div></sc-for>
+<sc-if value="{{ acctDetail.empty }}"><span style="font-size:13px;color:var(--color-neutral-700)">暂无持仓，去「记录」记一笔</span></sc-if>
+</div>
+</div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:2px 16px">
+<sc-for list="{{ acctDetail.items }}" as="it"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;padding:10px 0;font-size:14px;border-bottom:1px solid var(--color-neutral-200);cursor:pointer" onClick="{{ it.calib }}"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.code }} <span style="color:var(--color-neutral-700);font-size:12px">{{ it.under }}</span></span><span style="text-align:right">{{ it.value }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ it.qty }} 份</span><span style="font-size:12px;color:var(--color-accent-700);font-weight:600;text-align:right">校准 ›</span></div></sc-for>
+</div>
+<div style="display:flex;gap:8px"><button class="btn btn-secondary" onClick="{{ closeSheet }}">关闭</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetAddAcct }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<span style="font-family:var(--font-heading);font-size:22px">添加账户</span>
+<div class="field"><label>名称</label><input class="input" placeholder="如 长桥、华泰证券" value="{{ acctForm.name }}" onChange="{{ setAcctName }}"></div>
+<div class="field"><label>类型</label><div class="seg"><sc-for list="{{ acctTypeOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="at" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div></div>
+<div class="field"><label>账户币种</label><div class="seg"><sc-for list="{{ acctCcyOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="ac" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div></div>
+<sc-if value="{{ acctErr }}"><span style="font-size:13px;color:var(--color-accent-800)">{{ acctErr }}</span></sc-if>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ saveAcct }}">保存</button><button class="btn btn-secondary" onClick="{{ closeSheet }}">取消</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetCalib }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeCalib }}">
+<div style="width:100%;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:var(--font-heading);font-size:22px">校准持仓</span><span style="font-size:13px;color:var(--color-neutral-700)">{{ calibInfo.title }}</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--color-neutral-700)">App 记录份额</span><span style="font-weight:700;font-size:17px">{{ calibInfo.recQty }}</span></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:var(--color-neutral-700)">当前市值</span><span style="font-weight:700;font-size:17px">{{ calibInfo.value }}</span></div>
+</div>
+<div class="field"><label>券商显示的实际份额</label><input class="input" type="number" value="{{ calib.qty }}" onChange="{{ setCalibQty }}"></div>
+<div class="field"><label>差异原因</label><div class="seg"><sc-for list="{{ calibReasonOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="cr" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div></div>
+<sc-if value="{{ calibInfo.hasDiff }}"><div style="{{ calibInfo.diffStyle }}">{{ calibInfo.diffText }}</div></sc-if>
+<span style="font-size:12px;line-height:1.5;color:var(--color-neutral-700)">校准只修正份额，不算买卖，也不改变净投入本金。总成本不变，平均成本会相应摊薄。保存后会自动刷新行情和市值。</span>
+<sc-if value="{{ calibErr }}"><span style="font-size:13px;color:var(--color-accent-800)">{{ calibErr }}</span></sc-if>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ saveCalib }}">保存校准</button><button class="btn btn-secondary" onClick="{{ closeCalib }}">取消</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetAddTarget }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;max-height:88%;overflow-y:auto;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:var(--font-heading);font-size:22px">添加目标资产</span><span style="font-size:13px;color:var(--color-neutral-700)">加入后初始目标为 0%，在编辑态里填上比例再保存。</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ addableList }}" as="u"><button class="btn btn-secondary" style="font-size:13px" onClick="{{ u.add }}">{{ u.name }}</button></sc-for></div>
+<sc-if value="{{ noAddable }}"><span style="font-size:13px;color:var(--color-neutral-700)">预设资产都已在目标组合里</span></sc-if>
+<div style="display:flex;flex-direction:column;gap:6px;padding-top:6px"><span style="font-weight:700">自定义资产</span><span style="font-size:12px;color:var(--color-neutral-700);line-height:1.5">比如比特币、REITs、日本股市。之后记一笔时，可以把品种归到它下面。</span></div>
+<div style="display:flex;gap:8px"><input class="input" style="flex:1;min-width:0" placeholder="资产名称" value="{{ customName }}" onChange="{{ setCustomName }}"><select class="input" style="width:auto;flex:none" value="{{ customGroup }}" onChange="{{ setCustomGroup }}"><sc-for list="{{ groupOpts }}" as="g"><option value="{{ g.id }}">{{ g.name }}</option></sc-for></select></div>
+<sc-if value="{{ customErr }}"><span style="font-size:13px;color:var(--color-accent-800)">{{ customErr }}</span></sc-if>
+<div style="display:flex;gap:8px"><button class="btn btn-primary" onClick="{{ addCustom }}">添加自定义资产</button><button class="btn btn-secondary" onClick="{{ closeSheet }}">关闭</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetCalibList }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.28);display:flex;align-items:flex-end" onClick="{{ closeSheet }}">
+<div style="width:100%;max-height:90%;overflow-y:auto;background:var(--color-bg);border-radius:28px 28px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:14px" onClick="{{ stop }}">
+<div style="display:flex;flex-direction:column;gap:4px"><span style="font-family:var(--font-heading);font-size:22px">本期待校准</span><span style="font-size:13px;line-height:1.5;color:var(--color-neutral-700)">对照券商 App 里的份额逐个核对。份额没变也点进去保存一次，就会标记为已核对。</span></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:2px 16px">
+<sc-for list="{{ calibItems }}" as="c"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 8px;padding:11px 0;border-bottom:1px solid var(--color-neutral-200);cursor:pointer" onClick="{{ c.open }}"><span style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="font-size:14px;text-align:right">{{ c.value }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ c.sub }}</span><span class="tag tag-accent-2" style="justify-self:end">{{ c.tagText }}</span></div></sc-for>
+<sc-if value="{{ calibNone }}"><span style="display:block;padding:14px 0;font-size:13px;color:var(--color-neutral-700)">本期全部核对完成</span></sc-if>
+</div>
+<div style="display:flex;gap:8px"><button class="btn btn-secondary" onClick="{{ markAllChecked }}">全部标记已核对</button><button class="btn btn-secondary" onClick="{{ closeSheet }}">关闭</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showOnb }}">
+<div style="position:absolute;inset:0;background:var(--color-bg);overflow-y:auto;scrollbar-width:none">
+<sc-if value="{{ onbStep0 }}">
+<div style="min-height:100%;padding:72px 24px 40px;display:flex;flex-direction:column;gap:18px">
+<span style="width:56px;height:56px;border-radius:999px;background:var(--color-accent-200)"></span>
+<span style="font-family:var(--font-heading);font-size:34px;line-height:1.1">开始管理你的组合</span>
+<span style="font-size:15px;line-height:1.6;color:var(--color-neutral-800)">把分散在各个券商和银行的持仓录进来，按底层资产合并查看，对照目标组合定期再平衡。</span>
+<div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--color-neutral-700)"><span>1　添加你用的券商和银行账户</span><span>2　录入每个账户当前的持仓和现金</span><span>3　生成目标组合，之后随时调整</span></div>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:40px"><button class="btn btn-primary" style="min-height:48px" onClick="{{ onbStart }}">从零开始录入</button><button class="btn btn-secondary" style="min-height:48px" onClick="{{ onbDemo }}">先看示例数据</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ onbStep1 }}">
+<div style="padding:28px 20px 32px;display:flex;flex-direction:column;gap:16px">
+<span style="font-size:12px;color:var(--color-neutral-700)">第 1 / 3 步</span>
+<span style="font-family:var(--font-heading);font-size:26px">你在哪些地方有资产？</span>
+<div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ presetChips }}" as="c"><button style="{{ c.style }}" onClick="{{ c.pick }}">{{ c.label }}</button></sc-for></div>
+<div class="field"><label>其他账户</label><div style="display:flex;gap:8px"><input class="input" style="flex:1;min-width:0" placeholder="账户名称" value="{{ onb.custom }}" onChange="{{ onbSetCustom }}"><div class="seg" style="flex:none"><sc-for list="{{ onbCcyOpts }}" as="o"><label class="seg-opt" style="white-space:nowrap;flex:none"><input type="radio" name="oc" checked="{{ o.on }}" onChange="{{ o.pick }}" style="display:none">{{ o.label }}</label></sc-for></div><button class="btn btn-secondary" onClick="{{ onbAddCustom }}">添加</button></div></div>
+<span style="font-size:13px;color:var(--color-neutral-700)">{{ onbAcctCount }}</span>
+<sc-if value="{{ onb.err }}"><span style="font-size:13px;color:var(--color-accent-800)">{{ onb.err }}</span></sc-if>
+<div style="display:flex;gap:8px;padding-top:8px"><button class="btn btn-secondary" onClick="{{ onbBack }}">上一步</button><button class="btn btn-primary" onClick="{{ onbNext1 }}">下一步</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ onbStep2 }}">
+<div style="padding:28px 20px 32px;display:flex;flex-direction:column;gap:14px">
+<span style="font-size:12px;color:var(--color-neutral-700)">第 2 / 3 步</span>
+<span style="font-family:var(--font-heading);font-size:26px">录入当前持仓</span>
+<span style="font-size:13px;line-height:1.5;color:var(--color-neutral-700)">按账户录入，以券商 App 里显示的份额和成本价为准。</span>
+<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none"><sc-for list="{{ onbAcctTabs }}" as="c"><button style="{{ c.style }}" onClick="{{ c.pick }}">{{ c.label }}</button></sc-for></div>
+<div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 14px">
+<sc-for list="{{ onbRows }}" as="r"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--color-neutral-200)"><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600;font-size:14px">{{ r.title }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ r.sub }}</span></span><button class="btn btn-ghost btn-icon" style="color:var(--color-neutral-600)" onClick="{{ r.del }}" aria-label="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div></sc-for>
+<sc-if value="{{ onbNoRows }}"><span style="display:block;padding:12px 0;font-size:13px;color:var(--color-neutral-700)">这个账户还没有录入持仓</span></sc-if>
+</div>
+<div style="border:2px dashed var(--color-neutral-300);border-radius:var(--radius-md);padding:14px;display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:700;font-size:14px">添加一条持仓到「{{ onbCurName }}」</span>
+<div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px">
+<div class="field"><label>代码</label><input class="input" placeholder="VOO" value="{{ onb.form.code }}" onChange="{{ onbSetCode }}"></div>
+<div class="field"><label>份额</label><input class="input" type="number" value="{{ onb.form.qty }}" onChange="{{ onbSetQty }}"></div>
+<div class="field"><label>成本价</label><input class="input" type="number" value="{{ onb.form.cost }}" onChange="{{ onbSetCost }}"></div>
+</div>
+<sc-if value="{{ onbRecOk }}"><span class="tag tag-accent-2" style="align-self:flex-start">{{ onbRecText }}</span></sc-if>
+<sc-if value="{{ onbNeedUnder }}"><div class="field"><label>未识别，选择底层资产</label><select class="input" value="{{ onb.form.under }}" onChange="{{ onbSetUnder }}"><sc-for list="{{ underOpts }}" as="u"><option value="{{ u.id }}">{{ u.name }}</option></sc-for></select></div></sc-if>
+<button class="btn btn-primary" style="align-self:flex-start" onClick="{{ onbAddPos }}">+ 添加到列表</button>
+<span style="font-size:12px;color:var(--color-neutral-700)">一个账户有多只就逐条添加；填好没点也没关系，点「下一步」会自动加进去。</span>
+</div>
+<sc-if value="{{ onbCashOk }}"><div class="field"><label>{{ onbCashLabel }}</label><input class="input" type="number" placeholder="0" value="{{ onbCashVal }}" onChange="{{ onbSetCash }}"></div></sc-if>
+<sc-if value="{{ onb.err }}"><span style="font-size:13px;color:var(--color-accent-800)">{{ onb.err }}</span></sc-if>
+<div style="display:flex;gap:8px;padding-top:8px"><button class="btn btn-secondary" onClick="{{ onbBack }}">上一步</button><button class="btn btn-primary" onClick="{{ onbNext2 }}">下一步</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ onbStep3 }}">
+<div style="padding:28px 20px 32px;display:flex;flex-direction:column;gap:14px">
+<span style="font-size:12px;color:var(--color-neutral-700)">第 3 / 3 步</span>
+<span style="font-family:var(--font-heading);font-size:26px">设定目标组合</span>
+<span style="font-size:13px;line-height:1.6;color:var(--color-neutral-800)">目标组合是你希望每项资产各占多少比例，比如标普 500 占 40%、美债占 15%。App 会拿它和实际持仓对比，提醒你哪里偏了、新钱该投哪。</span>
+<sc-if value="{{ onbNoPos }}"><div style="background:var(--color-accent-100);color:var(--color-accent-800);border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.5">你还没有录入任何股票或基金，目前只有现金，所以生成的目标会是现金 100%。建议点「上一步」把持仓录进去。</div></sc-if>
+<div style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ onbTmodes }}" as="m"><button style="{{ m.style }}" onClick="{{ m.pick }}"><span style="font-weight:700;font-size:15px">{{ m.title }}</span><span style="font-size:12px;color:var(--color-neutral-700)">{{ m.desc }}</span></button></sc-for></div>
+<sc-if value="{{ onbShowPreview }}"><div style="background:var(--color-neutral-100);border-radius:var(--radius-md);padding:4px 16px"><sc-for list="{{ onbPreview }}" as="p"><div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:14px;border-bottom:1px solid var(--color-neutral-200)"><span style="display:flex;align-items:center;gap:8px"><span style="{{ p.dotStyle }}"></span>{{ p.name }}</span><span style="font-weight:700">{{ p.pct }}%</span></div></sc-for></div></sc-if>
+<span style="font-size:12px;line-height:1.5;color:var(--color-neutral-700)">{{ onbSummary }}</span>
+<div style="display:flex;gap:8px;padding-top:8px"><button class="btn btn-secondary" onClick="{{ onbBack }}">上一步</button><button class="btn btn-primary" onClick="{{ onbFinish }}">完成，开始使用</button></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ toast }}"><div style="position:absolute;left:20px;right:20px;bottom:92px;background:var(--color-text);color:var(--color-bg);border-radius:999px;padding:12px 18px;font-size:14px;text-align:center">{{ toast }}</div></sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FX0 = { CNY: 1, USD: 7.1, HKD: 0.91 };
+const SYM = { CNY: '¥', USD: '$', HKD: 'HK$' };
+const GROUPS = [
+  { id: 'us', name: '美股指数', color: 'var(--color-accent)' }, { id: 'stk', name: '个股', color: 'var(--color-accent-700)' },
+  { id: 'intl', name: '国际股', color: 'var(--color-accent-300)' }, { id: 'cn', name: '中国股', color: 'var(--color-accent-2)' },
+  { id: 'bond', name: '债券', color: 'var(--color-accent-2-300)' }, { id: 'gold', name: '黄金', color: 'var(--color-accent-2-700)' },
+  { id: 'cash', name: '现金', color: 'var(--color-neutral-400)' }, { id: 'other', name: '其他', color: 'var(--color-neutral-600)' },
+];
+const CUSTOMCOL = ['var(--color-neutral-700)', 'var(--color-accent-2-500)', 'var(--color-accent-600)', 'var(--color-accent-2-900)'];
+const UNDER = {
+  sp500: { name: '标普 500', g: 'us' }, ndx: { name: '纳斯达克 100', g: 'us' },
+  brk: { name: '伯克希尔', g: 'stk', stock: 1 }, aapl: { name: '苹果', g: 'stk', stock: 1 }, moutai: { name: '贵州茅台', g: 'stk', stock: 1 },
+  exus: { name: '全球除美', g: 'intl' }, csi300: { name: '沪深 300', g: 'cn' },
+  ust10: { name: '10 年期美债', g: 'bond' }, gold: { name: '黄金', g: 'gold' },
+  usd: { name: '美元现金', g: 'cash', cash: 'USD' }, cny: { name: '人民币现金', g: 'cash', cash: 'CNY' },
+};
+const SLOT_ORDER = ['sp500', 'ndx', 'stocks', 'brk', 'aapl', 'moutai', 'exus', 'csi300', 'ust10', 'gold', 'usd', 'cny'];
+const SLOTCOL = { sp500: 'var(--color-accent)', ndx: 'var(--color-accent-300)', stocks: 'var(--color-accent-700)', brk: 'var(--color-accent-800)', aapl: 'var(--color-accent-500)', moutai: 'var(--color-accent-900)', exus: 'var(--color-accent-200)', csi300: 'var(--color-accent-2)', ust10: 'var(--color-accent-2-300)', gold: 'var(--color-accent-2-700)', usd: 'var(--color-neutral-500)', cny: 'var(--color-neutral-300)' };
+const SLOTPARAM = { sp500: [0.10, 1, 0.3], ndx: [0.14, 1.4, 1.1], stocks: [0.12, 1.2, 2.3], brk: [0.11, 0.9, 2.9], aapl: [0.15, 1.5, 3.7], moutai: [0.02, 1.4, 4.1], exus: [0.05, 0.9, 5.2], csi300: [-0.01, 1.2, 6.4], ust10: [0.01, 0.4, 7.3], gold: [0.09, 0.8, 8.8], usd: [0, 0, 0], cny: [0, 0, 0] };
+const ACOL = ['var(--color-accent-700)', 'var(--color-accent-400)', 'var(--color-accent-2-700)', 'var(--color-accent-2-400)', 'var(--color-neutral-600)', 'var(--color-neutral-400)', 'var(--color-accent-200)', 'var(--color-accent-2-200)'];
+const mktFor = (type, ccy) => ccy === 'USD' ? '美股' : ccy === 'HKD' ? '港股' : type === '银行' ? '场外基金' : 'A股';
+const ACCTS = [
+  ['futu', '富途', '券商', 'USD'], ['ibkr', '盈透 IBKR', '券商', 'USD'], ['schwab', '嘉信 Schwab', '券商', 'USD'],
+  ['ft', 'Firstrade', '券商', 'USD'], ['cms', '招商证券', '券商', 'CNY'], ['cmb', '招商银行', '银行', 'CNY'],
+].map(([id, name, type, ccy], i) => ({ id, name, type, ccy, mkt: mktFor(type, ccy), color: ACOL[i] }));
+const I = (name, ccy, price, u, market) => ({ name, ccy, price, u, market });
+const INSTS = {
+  VOO: I('Vanguard 标普500', 'USD', 540, 'sp500', '美股'), '513500': I('标普500ETF', 'CNY', 2.1, 'sp500', 'A股'),
+  '050025': I('博时标普500 QDII', 'CNY', 5.2, 'sp500', '场外基金'), QQQ: I('Invesco 纳指100', 'USD', 480, 'ndx', '美股'),
+  AAPL: I('苹果', 'USD', 230, 'aapl', '美股'), 'BRK.B': I('伯克希尔 B', 'USD', 470, 'brk', '美股'),
+  VXUS: I('Vanguard 全球除美', 'USD', 68, 'exus', '美股'), '510300': I('沪深300ETF', 'CNY', 4, 'csi300', 'A股'),
+  '600519': I('贵州茅台', 'CNY', 1500, 'moutai', 'A股'), IEF: I('iShares 7-10年美债', 'USD', 95, 'ust10', '美股'),
+  GLD: I('SPDR 黄金', 'USD', 245, 'gold', '美股'), '518880': I('黄金ETF', 'CNY', 6.2, 'gold', 'A股'),
+  USD: I('美元现金', 'USD', 1, 'usd', '现金'), CNY: I('人民币现金', 'CNY', 1, 'cny', '现金'),
+};
+const KNOWN = {
+  SPY: I('SPDR 标普500', 'USD', 590, 'sp500', '美股'), IVV: I('iShares 标普500', 'USD', 595, 'sp500', '美股'),
+  QQQM: I('Invesco 纳指100', 'USD', 200, 'ndx', '美股'), '513100': I('纳指ETF', 'CNY', 1.6, 'ndx', 'A股'),
+  '159941': I('纳指ETF', 'CNY', 1.2, 'ndx', 'A股'), '270042': I('广发纳指100 QDII', 'CNY', 6.5, 'ndx', '场外基金'),
+  VEA: I('Vanguard 发达市场', 'USD', 52, 'exus', '美股'), '159934': I('黄金ETF', 'CNY', 6.1, 'gold', 'A股'),
+  '000216': I('华安黄金', 'CNY', 2.4, 'gold', '场外基金'), '000051': I('华夏沪深300', 'CNY', 1.5, 'csi300', '场外基金'),
+};
+const POS = [
+  ['futu', 'VOO', 120, 450], ['ibkr', 'VOO', 80, 480], ['schwab', 'VOO', 60, 500], ['cms', '513500', 60000, 1.8],
+  ['cmb', '050025', 30000, 4.3], ['ibkr', 'QQQ', 50, 400], ['ft', 'AAPL', 60, 180], ['ft', 'BRK.B', 40, 350],
+  ['schwab', 'VXUS', 200, 60], ['cms', '510300', 30000, 3.8], ['cms', '600519', 60, 1650], ['ibkr', 'IEF', 900, 96],
+  ['schwab', 'IEF', 300, 94], ['cms', '518880', 15000, 4.8], ['futu', 'USD', 8000, 1], ['cmb', 'CNY', 150000, 1],
+].map(([acct, code, qty, cost]) => ({ acct, code, qty, cost }));
+['VOO', 'QQQ', 'IEF', 'VXUS', '050025', '510300', '513500', 'AAPL'].forEach(k => { INSTS[k].div = 1; });
+const P0 = POS.reduce((a, p) => a + p.qty * p.cost * FX0[INSTS[p.code].ccy], 0);
+const PRESETS = [['富途', 'USD'], ['盈透 IBKR', 'USD'], ['嘉信 Schwab', 'USD'], ['Firstrade', 'USD'], ['老虎', 'USD'], ['长桥', 'USD'], ['招商证券', 'CNY'], ['华泰证券', 'CNY'], ['招商银行', 'CNY', '银行'], ['支付宝基金', 'CNY', '银行']];
+const download = (name, text, type) => { const b = new Blob(['\ufeff' + text], { type }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); a.remove(); };
+const T = (date, type, acct, code, qty, price, reason) => ({ date, type, acct, code, qty, price, reason });
+const TXNS = [
+  T('2026-09-18', '买入', 'cms', '513500', 10000, 2.05), T('2026-09-02', '买入', 'futu', 'VOO', 10, 528),
+  T('2026-08-15', '卖出', 'ft', 'AAPL', 20, 225), T('2026-08-01', '买入', 'ibkr', 'IEF', 100, 95.4),
+  T('2026-07-10', '买入', 'cms', '518880', 5000, 5.6), T('2026-06-20', '校准', 'futu', 'VOO', 0.84, 520, '红利再投'),
+  T('2026-03-05', '买入', 'schwab', 'VOO', 20, 505), T('2026-01-12', '买入', 'cmb', '050025', 5000, 4.6),
+  T('2025-11-20', '卖出', 'schwab', 'VXUS', 100, 62), T('2025-09-08', '买入', 'ibkr', 'QQQ', 10, 430),
+  T('2025-06-16', '买入', 'cms', '600519', 20, 1580), T('2025-03-03', '买入', 'ibkr', 'IEF', 200, 93),
+];
+const SEED_CONVS = [
+  { id: 'h1', title: '美债超配要不要现在调？', time: '09-12 21:40', msgs: [{ who: 'me', text: '美债超配要不要现在调？', time: '21:40' }, { who: 'ai', text: '你的 10 年期美债比目标高出约 11%。\n1. 超配已超过 ±3% 阈值，按规则应调整。\n2. 近期如果有新资金，优先用增量补纳指和黄金，比直接卖美债更省成本。\n3. 没有新资金的话，可以分两三次卖出，避免一次性择时。\n仅供参考，不构成投资建议。', time: '21:41' }] },
+  { id: 'h2', title: '年底前的加仓计划', time: '08-20 09:15', msgs: [{ who: 'me', text: '年底前我大概还有 20 万人民币，怎么安排？', time: '09:15' }, { who: 'ai', text: '按你的目标组合，人民币资金优先补：\n1. 纳斯达克 100（可用 513100）\n2. 黄金（518880）\n3. 沪深 300（510300）\n建议分 3–4 次，每月一次。\n仅供参考，不构成投资建议。', time: '09:16' }] },
+];
+const D = 2260;
+const RANGES = { '1周': 7, '1个月': 30, '3个月': 91, '1年': 365, '3年': 1095, '5年': 1825, '全部': D };
+const TODAY = new Date(2026, 8, 29);
+const dayDate = t => new Date(TODAY.getTime() - (D - t) * 864e5);
+const fmtDay = (t, long) => { const d = dayDate(t), mm = String(d.getMonth() + 1).padStart(2, '0'), dd = String(d.getDate()).padStart(2, '0'); return long ? `${d.getFullYear()}-${mm}` : `${mm}-${dd}`; };
+function buildHist(endV, endP, extra) {
+  const bP = endP - extra, Dep = bP * 1.06, W = bP * 0.06, ev = [{ t: 0, a: 0.3 * Dep }];
+  const qs = []; for (let t = 91; t < D - 30; t += 91) qs.push(t);
+  qs.forEach(t => ev.push({ t, a: 0.62 * Dep / qs.length }));
+  ev.push({ t: D - 12, a: 0.08 * Dep }); ev.push({ t: D - 420, a: -W }); if (Math.abs(extra) > 0.5) ev.push({ t: D, a: extra }); ev.sort((a, b) => a.t - b.t);
+  const P = new Float64Array(D + 1), V = new Float64Array(D + 1); let ei = 0, run = 0;
+  const nz = t => 0.03 * Math.sin(t / 53) + 0.02 * Math.sin(t / 9) + 0.012 * Math.sin(t / 2.7 + 1) + 0.006 * Math.sin(t * 1.9);
+  const dd = t => -0.12 * Math.exp(-Math.pow((t - D * 0.3) / 40, 2)) - 0.07 * Math.exp(-Math.pow((t - D * 0.72) / 25, 2));
+  const mEnd = endV / endP, off = nz(D) + dd(D);
+  for (let t = 0; t <= D; t++) { while (ei < ev.length && ev[ei].t <= t) run += ev[ei++].a; P[t] = run;
+    const k = t / D; V[t] = run * (1 + (mEnd - 1) * Math.pow(k, 1.1) + nz(t) + dd(t) - off * k); }
+  return { P, V, ev };
+}
+const idx = (key, t) => { const [mu, vol, sd] = SLOTPARAM[key] || [0, 0, 0]; return Math.exp(mu * t / 365 + vol * (0.08 * Math.sin(t / 61 + sd) + 0.05 * Math.sin(t / 17 + 2 * sd) + 0.02 * Math.sin(t / 3.1 + 3 * sd))); };
+const dot = c => `width:10px;height:10px;flex:none;border-radius:999px;background:${c}`;
+const qtyTxt = q => q.toLocaleString('en-US', { maximumFractionDigits: 2 });
+const nowHM = () => { const d = new Date(); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+
+class Component extends DCLogic {
+  state = {
+    tab: 'perf', sub: null, ccy: 'CNY', hide: false, holdView: 'asset', open: { 'u:sp500': true }, sheet: null, toast: null,
+    positions: POS, insts: INSTS, txns: TXNS, accts: ACCTS, fx: FX0,
+    targets: { sp500: 40, ndx: 15, stocks: 10, csi300: 5, ust10: 15, gold: 5, usd: 5, cny: 5 }, ownStock: {},
+    threshold: 3, period: '季度', goal: { spend: 300000, ret: 7, infl: 2.5, target: 8000000 },
+    range: '1年', hover: null, refreshing: false, updated: null, pull: 0,
+    acctId: null, acctForm: { name: '', type: '券商', ccy: 'USD' }, acctErr: null,
+    form: { type: '买入', acct: 'futu', code: '', under: 'sp500', qty: '', price: '', fee: '', amount: '' }, formErr: null,
+    dep: { ccy: 'CNY', amount: '100000', mode: 'acct', acct: 'cms' }, wd: { ccy: 'USD', amount: '20000' },
+    ai: { provider: 'DeepSeek', base: 'https://api.deepseek.com', model: 'deepseek-chat', key: '', status: null, statusMsg: '', connected: false, input: '', busy: false, web: true, consent: false, drawer: false, convs: SEED_CONVS, cur: null },
+    calib: null, calibErr: null, recTime: '全部', recType: '全部', recSort: 'desc', customName: '', customGroup: 'other', customErr: null,
+    p0: P0, flows: 0, calibPeriod: '季度', onbShow: true, fresh: false, tEdit: false, tDraft: null, ignoreUndef: false,
+    onb: { step: 0, accts: [], cur: null, pos: [], cash: {}, form: { code: '', qty: '', cost: '', under: 'sp500' }, custom: '', customCcy: 'USD', err: null, tmode: 'current' },
+  };
+  componentDidMount() { this.refresh(); this.scrollChart(); }
+  componentDidUpdate() {}
+  componentWillUnmount() { clearTimeout(this.tt); clearTimeout(this.rt); }
+  scrollChart() { [60, 250].forEach(ms => setTimeout(() => { const c = document.querySelector('[data-chart]'); if (c) c.scrollLeft = c.scrollWidth; }, ms)); }
+  scrollMsgs() { [40, 200].forEach(ms => setTimeout(() => { const m = document.querySelector('[data-msgs]'); if (m) m.scrollTop = m.scrollHeight; }, ms)); }
+  flash(msg) { this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2400); }
+  refresh() {
+    if (this.state.refreshing) return;
+    this.setState({ refreshing: true });
+    this.rt = setTimeout(() => this.setState(s => {
+      const insts = {}; Object.entries(s.insts).forEach(([k, i]) => { insts[k] = i.market === '现金' ? i : { ...i, price: +(i.price * (1 + (Math.random() - 0.5) * 0.012)).toFixed(i.price < 10 ? 3 : 2) }; });
+      return { insts, fx: { ...s.fx, USD: +(7.1 * (1 + (Math.random() - 0.5) * 0.004)).toFixed(4) }, refreshing: false, updated: nowHM() };
+    }), 1200);
+  }
+  setAI(p) { this.setState(s => ({ ai: { ...s.ai, ...p } })); }
+  toggle(k) { this.setState(s => ({ open: { ...s.open, [k]: !s.open[k] } })); }
+  setForm(p) { this.setState(s => ({ form: { ...s.form, ...p }, formErr: null })); }
+  lookup(code) { const c = code.trim().toUpperCase(); return this.state.insts[c] || KNOWN[c] || null; }
+  applyTrades(trades, type, ccy) {
+    this.setState(s => {
+      const positions = s.positions.map(p => ({ ...p })), insts = { ...s.insts }, txns = [...s.txns];
+      trades.forEach(t => {
+        const ins = insts[t.code] || KNOWN[t.code]; insts[t.code] = ins;
+        const qty = t.cny / (ins.price * s.fx[ins.ccy]);
+        const p = positions.find(x => x.acct === t.acct && x.code === t.code);
+        if (type === '卖出') { if (p) p.qty = Math.max(0, p.qty - qty); }
+        else if (p) { p.cost = (p.qty * p.cost + qty * ins.price) / (p.qty + qty); p.qty += qty; }
+        else positions.push({ acct: t.acct, code: t.code, qty, cost: ins.price });
+        if (ins.market !== '现金') txns.unshift({ date: '2026-09-29', type, acct: t.acct, code: t.code, qty: +qty.toFixed(2), price: ins.price });
+      });
+      const sum = trades.reduce((a, t) => a + t.cny, 0), sg = type === '买入' ? 1 : -1, cc = ccy || 'CNY';
+      txns.unshift(T('2026-09-29', sg > 0 ? '入金' : '出金', trades[0].acct, cc, Math.round(sum / s.fx[cc]), 1, sg > 0 ? '投入一笔钱' : '取钱'));
+      return { positions: positions.filter(x => x.qty > 0.0001), insts, txns, sheet: null, flows: s.flows + sg * sum };
+    });
+  }
+  save() {
+    const s = this.state, f = s.form, acct = s.accts.find(a => a.id === f.acct), cc = acct && (acct.ccy === 'USD' || acct.ccy === 'CNY') ? acct.ccy : null;
+    const positions = s.positions.map(p => ({ ...p })), txns = [...s.txns], D0 = '2026-09-29';
+    const cashP = () => { let c = positions.find(x => x.acct === f.acct && x.code === cc); if (!c) { c = { acct: f.acct, code: cc, qty: 0, cost: 1 }; positions.push(c); } return c; };
+    let flows = s.flows, note = '';
+    if (f.type === '入金' || f.type === '出金') {
+      const amt = parseFloat(f.amount); if (!(amt > 0)) return this.setState({ formErr: '请填写金额' });
+      if (!cc) return this.setState({ formErr: '该账户币种暂不支持现金记录' });
+      const c = cashP(); if (f.type === '出金' && c.qty < amt) return this.setState({ formErr: `账户现金只有 ${SYM[cc]}${qtyTxt(c.qty)}，不够转出` });
+      c.qty += f.type === '入金' ? amt : -amt; flows += (f.type === '入金' ? 1 : -1) * amt * s.fx[cc];
+      txns.unshift(T(D0, f.type, f.acct, cc, amt, 1));
+      this.setState({ positions: positions.filter(x => x.qty > 0.0001), txns, flows, sheet: null, form: { ...f, amount: '' } });
+      return this.flash(`已记录${f.type} ${SYM[cc]}${qtyTxt(amt)} · 本金线已更新`);
+    }
+    const code = f.code.trim().toUpperCase(), qty = parseFloat(f.qty), price = parseFloat(f.price), fee = parseFloat(f.fee) || 0;
+    if (!code) return this.setState({ formErr: '请填写代码' });
+    if (!(qty > 0) || !(price > 0)) return this.setState({ formErr: '请填写数量和成交价' });
+    let ins = this.lookup(code);
+    if (!ins) ins = I(code, /^\d+$/.test(code) ? 'CNY' : 'USD', price, f.under, /^\d+$/.test(code) ? 'A股' : '美股');
+    const p = positions.find(x => x.acct === f.acct && x.code === code), gross = qty * price, fx = s.fx[ins.ccy], linked = cc === ins.ccy;
+    if (f.type === '卖出') {
+      if (!p || p.qty < qty) return this.setState({ formErr: '该账户持仓不足' });
+      p.qty -= qty; const net = gross - fee;
+      if (linked) { cashP().qty += net; note = '，所得已计入账户现金'; } else { flows -= net * fx; note = '，所得记为出金'; }
+    } else {
+      const amt = gross + fee;
+      if (p) { p.cost = (p.qty * p.cost + amt) / (p.qty + qty); p.qty += qty; } else positions.push({ acct: f.acct, code, qty, cost: amt / qty });
+      if (linked) { const c = cashP(), short = Math.max(0, amt - c.qty); c.qty = Math.max(0, c.qty - amt);
+        if (short > 0) { flows += short * fx; txns.unshift(T(D0, '入金', f.acct, cc, +short.toFixed(2), 1, '买入时现金不足自动补记')); note = `，现金不足的 ${SYM[cc]}${qtyTxt(short)} 已记为入金`; } else note = '，已从账户现金扣款'; }
+      else { flows += amt * fx; note = '，记为新入金'; }
+    }
+    txns.unshift({ ...T(D0, f.type, f.acct, code, qty, price), fee });
+    this.setState({ positions: positions.filter(x => x.qty > 0.0001), insts: { ...s.insts, [code]: s.insts[code] || ins }, txns, flows, sheet: null, form: { ...f, code: '', qty: '', price: '', fee: '' } });
+    this.flash(`已记录 ${code}${note}`);
+  }
+  saveOld() {
+    const s = this.state, f = s.form, code = f.code.trim().toUpperCase();
+    const qty = parseFloat(f.qty), price = parseFloat(f.price);
+    if (!code) return this.setState({ formErr: '请填写代码' });
+    if (!(qty > 0) || !(price > 0)) return this.setState({ formErr: '请填写数量和成交价' });
+    let ins = this.lookup(code);
+    if (!ins) ins = I(code, /^\d+$/.test(code) ? 'CNY' : 'USD', price, f.under, /^\d+$/.test(code) ? 'A股' : '美股');
+    const positions = s.positions.map(p => ({ ...p }));
+    const p = positions.find(x => x.acct === f.acct && x.code === code);
+    if (f.type === '卖出') { if (!p || p.qty < qty) return this.setState({ formErr: '该账户持仓不足' }); p.qty -= qty; }
+    else if (p) { p.cost = (p.qty * p.cost + qty * price) / (p.qty + qty); p.qty += qty; }
+    else positions.push({ acct: f.acct, code, qty, cost: price });
+    this.setState({ positions: positions.filter(x => x.qty > 0), insts: { ...s.insts, [code]: s.insts[code] || ins },
+      txns: [{ date: '2026-09-29', type: f.type, acct: f.acct, code, qty, price }, ...s.txns], sheet: null, form: { ...f, code: '', qty: '', price: '' } });
+    this.flash(`已记录 · ${code} 归入${UNDER[ins.u].name}`);
+  }
+  setAIf(fn) { this.setState(s => ({ ai: { ...s.ai, ...fn(s.ai) } })); }
+  setConv(id, p) { this.setAIf(a => ({ convs: a.convs.map(c => c.id === id ? { ...c, ...p } : c) })); }
+  async testAI() {
+    const a = this.state.ai, key = a.key.trim();
+    if (!key) return this.setAI({ status: 'fail', statusMsg: '请先填写 API Key' });
+    this.setAI({ status: 'testing', statusMsg: '' });
+    const t0 = performance.now(), ok = m => this.setAI({ status: 'ok', statusMsg: m }), fail = m => this.setAI({ status: 'fail', statusMsg: m });
+    try {
+      const ctrl = new AbortController(), to = setTimeout(() => ctrl.abort(), 6000);
+      const r = await fetch(a.base.replace(/\/$/, '') + '/models', { headers: { Authorization: 'Bearer ' + key }, signal: ctrl.signal });
+      clearTimeout(to); const ms = Math.round(performance.now() - t0);
+      if (r.ok) { const j = await r.json().catch(() => ({})); ok(`延迟 ${ms}ms · 可用模型：${(j.data || []).map(m => m.id).join('、') || a.model}`); }
+      else if (r.status === 401) fail('401 鉴权失败：API Key 无效或已过期');
+      else if (r.status === 402) fail('402 余额不足：请到 DeepSeek 控制台充值');
+      else fail(`${r.status} 请求失败：请检查接口地址`);
+    } catch (e) {
+      if (/^sk-[A-Za-z0-9]{20,}$/.test(key)) ok('原型环境受浏览器跨域限制，已按 Key 格式校验通过。真实 App 会经 Cloudflare Worker 发起测试请求。');
+      else fail(e.name === 'AbortError' ? '连接超时：请检查网络或接口地址' : '无法连接：Key 格式不正确（应为 sk- 开头的 32 位以上字符），或网络不可达');
+    }
+  }
+  saveCalib() {
+    const s = this.state, cb = s.calib, nq = parseFloat(cb.qty);
+    if (!(nq >= 0)) return this.setState({ calibErr: '请输入有效的份额' });
+    const positions = s.positions.map(p => ({ ...p })), p = positions.find(x => x.acct === cb.acct && x.code === cb.code);
+    if (!p) return;
+    const back = cb.from === 'acct' ? 'acct' : cb.from === 'list' ? 'calibList' : null, diff = nq - p.qty;
+    if (Math.abs(diff) < 1e-9) { this.setState({ sheet: back, txns: [T('2026-09-29', '校准', cb.acct, cb.code, 0, s.insts[cb.code].price, '已核对'), ...s.txns] }); return this.flash('份额一致，已标记为已核对'); }
+    const tc = p.qty * p.cost; p.qty = nq; if (nq > 0) p.cost = tc / nq;
+    this.setState({ positions: positions.filter(x => x.qty > 0), sheet: back, calibErr: null,
+      txns: [T('2026-09-29', '校准', cb.acct, cb.code, +diff.toFixed(4), s.insts[cb.code].price, cb.reason), ...s.txns] });
+    this.flash(`已校准 ${cb.code} ${diff > 0 ? '+' : ''}${qtyTxt(diff)} 份，正在刷新市值`); this.refresh();
+  }
+  async ask(q) {
+    q = (q || '').trim(); const a = this.state.ai; if (!q || a.busy) return;
+    const cid = a.cur, conv = a.convs.find(c => c.id === cid); if (!conv) return;
+    const msgs = [...conv.msgs, { who: 'me', text: q, time: nowHM() }];
+    this.setConv(cid, { msgs, title: conv.title === '新对话' ? q.slice(0, 18) : conv.title }); this.setAI({ input: '', busy: true }); this.scrollMsgs();
+    const hist = msgs.slice(-8).map(m => `${m.who === 'me' ? '用户' : '投顾'}：${m.text}`).join('\n');
+    const prompt = `你是用户的私人投资顾问，风格冷静、专业、直接。用中文回答，分 2-4 个要点，总长不超过 200 字，不用 markdown 标题和加粗。${a.web ? '可以结合你了解的近期市场与宏观情况。' : '只基于用户数据回答。'}最后一句提醒这不构成投资建议（很短）。\n\n用户组合数据：\n${this._ctx}\n\n对话：\n${hist}\n投顾：`;
+    let text;
+    try { text = window.claude && window.claude.complete ? await window.claude.complete(prompt) : null; } catch (e) { text = null; }
+    if (!text) text = `从数据看：\n1. 10 年期美债明显超配，是当前最大的偏离项。\n2. 纳斯达克 100 低配最多，新增资金优先补它。\n3. 全球除美没有设目标，再平衡会建议卖出，可以考虑是否要给它一个目标。\n以上仅供参考，不构成投资建议。`;
+    const cv = this.state.ai.convs.find(c => c.id === cid); this.setConv(cid, { msgs: [...cv.msgs, { who: 'ai', text: text.trim(), time: nowHM() }] }); this.setAI({ busy: false }); this.scrollMsgs();
+  }
+  renderVals() {
+    const s = this.state, ccy = s.ccy, sym = SYM[ccy], FX = s.fx, hide = s.hide;
+    const acctName = id => (s.accts.find(a => a.id === id) || {}).name || id;
+    const MASK = '••••';
+    const fmtS = v => { if (hide) return MASK; const x = v / FX[ccy], a = Math.abs(x);
+      if (ccy === 'USD') return '$' + (a >= 1e6 ? (x / 1e6).toFixed(2) + 'M' : a >= 1e3 ? (x / 1e3).toFixed(1) + 'K' : x.toFixed(0));
+      return sym + (a >= 1e4 ? (x / 1e4).toFixed(1) + '万' : x.toFixed(0)); };
+    const fmtN = (v, c) => SYM[c] + Math.round(v / FX[c]).toLocaleString('en-US');
+    const sgn = v => v >= 0 ? '+' : '−';
+    const rows = s.positions.map(p => { const ins = s.insts[p.code], fx = FX[ins.ccy]; return { ...p, ins, value: p.qty * ins.price * fx, cost: p.qty * p.cost * fx }; });
+    const total = rows.reduce((a, r) => a + r.value, 0);
+    const grpOf = r => UNDER[r.ins.u].g;
+    const inBucket = u => !!UNDER[u].stock && !s.ownStock[u];
+    const slotOf = u => inBucket(u) ? 'stocks' : u;
+    const slotName = k => k === 'stocks' ? '个股合计' : UNDER[k].name;
+    const slotVal = {}, slotCost = {}; rows.forEach(r => { const k = slotOf(r.ins.u); slotVal[k] = (slotVal[k] || 0) + r.value; slotCost[k] = (slotCost[k] || 0) + r.cost; });
+    const keys = [...new Set([...Object.keys(s.targets), ...Object.keys(slotVal)])].sort((a, b) => { const o = k => { const i = SLOT_ORDER.indexOf(k); return i < 0 ? 50 : i; }; return o(a) - o(b); });
+    const slots = keys.map(k => { const v = slotVal[k] || 0, cur = v / total * 100, has = k in s.targets, tgt = has ? s.targets[k] : (s.ignoreUndef ? cur : 0), d = cur - tgt, off = has ? Math.abs(d) > s.threshold : (!s.ignoreUndef && v > 0), col = SLOTCOL[k] || 'var(--color-neutral-400)';
+      return { key: k, name: slotName(k), v, cur, tgt, off, untargeted: !has, tgtTxt: has ? tgt + '%' : (s.ignoreUndef ? '忽略' : '0%'), color: col, curTxt: cur.toFixed(1), diffTxt: (d > 0 ? '+' : '') + d.toFixed(1),
+        segStyle: `flex:${Math.max(cur, 0.01)};background:${col}`, dotStyle: dot(col),
+        diffStyle: `text-align:right;font-size:13px;font-weight:700;color:${off ? 'var(--color-accent-700)' : 'var(--color-neutral-600)'}` }; });
+    const offN = slots.filter(c => c.off).length;
+    const g = s.goal, need4 = g.spend / 0.04, rr = (1 + g.ret / 100) / (1 + g.infl / 100) - 1;
+    const yrs = t => total >= t ? 0 : rr <= 0 ? null : Math.ceil(Math.log(t / total) / Math.log(1 + rr));
+    const yr = t => { const n = yrs(t); return n == null ? '—' : 2026 + n; };
+    const scale = Math.max(need4, g.target, total);
+    const mk = x => `position:absolute;top:-5px;bottom:-5px;left:calc(${Math.min(100, x / scale * 100)}% - 1.5px);width:3px;border-radius:2px;background:var(--color-text)`;
+    const steps = slots.map(c => ({ c, d: c.tgt / 100 * total - c.v })).filter(x => Math.abs(x.d) > total * 0.003).sort((a, b) => a.d - b.d)
+      .map(x => ({ action: x.d < 0 ? '卖出' : '买入', tagClass: x.d < 0 ? 'tag tag-accent' : 'tag tag-accent-2', name: x.c.name + (x.c.untargeted ? '（未定义）' : ''), amount: fmtS(Math.abs(x.d)) }));
+    const next = s.period === '年' ? new Date(2027, 0, 1) : new Date(2026, 9, 1);
+    const days = Math.round((next - TODAY) / 864e5);
+    const biggest = slots.filter(c => c.off).sort((a, b) => Math.abs(b.cur - b.tgt) - Math.abs(a.cur - a.tgt))[0];
+    const rebalSummary = biggest ? `${biggest.name}${biggest.cur > biggest.tgt ? '超配' : '低配'} ${Math.abs(biggest.cur - biggest.tgt).toFixed(1)}%，共 ${offN} 项超出 ±${s.threshold}%。` : `所有资产都在 ±${s.threshold}% 以内，无需调整。`;
+
+    const allI = { ...KNOWN, ...s.insts };
+    const heldV = code => rows.filter(r => r.code === code).reduce((a, r) => a + r.value, 0);
+    const uSet = k => k === 'stocks' ? Object.keys(UNDER).filter(inBucket) : [k];
+    const pickInst = (k, pred) => { const us = uSet(k); const c = Object.entries(allI).filter(([, i]) => us.includes(i.u) && pred(i)).sort((a, b) => heldV(b[0]) - heldV(a[0])); return c.length ? c[0][0] : null; };
+    const acctFor = code => { const ins = allI[code]; const h = rows.filter(r => r.code === code).sort((a, b) => b.value - a.value)[0]; if (h) return h.acct;
+      const a = s.accts.find(a => a.ccy === ins.ccy && a.mkt === ins.market) || s.accts.find(a => a.ccy === ins.ccy); return a && a.id; };
+
+    const dp = s.dep, dAmt = parseFloat(dp.amount), dAcct = s.accts.find(a => a.id === dp.acct);
+    let depLines = [], depSummary = '', depNote = '', depTrades = [];
+    if (dAmt > 0) {
+      const A = dAmt * FX[dp.ccy], T2 = total + A;
+      const pred = i => i.ccy === dp.ccy && (dp.mode === 'any' || (dAcct && (i.market === dAcct.mkt || i.market === '现金')));
+      const tgtSlots = slots.filter(c => c.tgt > 0 && !c.untargeted);
+      const elig = tgtSlots.map(c => ({ c, code: pickInst(c.key, pred) })).filter(x => x.code);
+      const need = elig.map(x => Math.max(0, x.c.tgt / 100 * T2 - x.c.v)), sumD = need.reduce((a, b) => a + b, 0), sumT = elig.reduce((a, x) => a + x.c.tgt, 0);
+      const fill = L => elig.map(x => Math.max(0, L * x.c.tgt / 100 - x.c.v));
+      if (sumD <= A) elig.forEach((x, i) => { x.amt = need[i] + (A - sumD) * x.c.tgt / (sumT || 1); });
+      else { let lo = 0, hi = T2; for (let k = 0; k < 60; k++) { const m = (lo + hi) / 2; fill(m).reduce((a, b) => a + b, 0) > A ? hi = m : lo = m; } const f = fill(lo); elig.forEach((x, i) => { x.amt = f[i]; }); }
+      const used = elig.filter(x => x.amt > A * 0.002).sort((a, b) => b.amt - a.amt);
+      depTrades = used.map(x => ({ code: x.code, acct: dp.mode === 'acct' ? dp.acct : acctFor(x.code), cny: x.amt }));
+      depLines = used.map((x, i) => { const ins = allI[x.code], isCash = ins.market === '现金';
+        return { name: x.c.name, dotStyle: dot(x.c.color), amt: fmtN(x.amt, dp.ccy),
+          sub: isCash ? `留作现金 · ${acctName(depTrades[i].acct)}` : `${x.code} ${ins.name} · ${acctName(depTrades[i].acct)}${heldV(x.code) ? '' : ' · 新品种'}`,
+          move: `${x.c.cur.toFixed(1)}% → ${((x.c.v + x.amt) / T2 * 100).toFixed(1)}%` }; });
+      const maxBefore = Math.max(...tgtSlots.map(c => Math.abs(c.cur - c.tgt)));
+      const after = tgtSlots.map(c => { const e = used.find(x => x.c.key === c.key); return Math.abs(((c.v + (e ? e.amt : 0)) / T2 * 100) - c.tgt); });
+      depSummary = `投入后最大偏离 ${maxBefore.toFixed(1)}% → ${Math.max(...after).toFixed(1)}%`;
+      const miss = tgtSlots.filter(c => c.cur < c.tgt && !elig.find(x => x.c.key === c.key)).map(c => c.name);
+      if (miss.length) depNote = `${miss.join('、')} 低配，但${dp.mode === 'acct' ? '这个账户里' : ''}没有${dp.ccy === 'CNY' ? '人民币' : '美元'}品种可买${dp.mode === 'acct' ? '，可切换到「可跨账户」' : ''}。`;
+    }
+    const w = s.wd, wAmt = parseFloat(w.amount);
+    let wdLines = [], wdErr = null, wdTrades = [];
+    if (wAmt > 0) {
+      const A = wAmt * FX[w.ccy], T2 = total - A;
+      const byS = slots.map(c => ({ c, rs: rows.filter(r => r.ins.ccy === w.ccy && slotOf(r.ins.u) === c.key).sort((a, b) => b.value - a.value) })).map(x => ({ ...x, h: x.rs.reduce((a, r) => a + r.value, 0) })).filter(x => x.h > 0);
+      const sumH = byS.reduce((a, x) => a + x.h, 0);
+      if (A > sumH) wdErr = `${w.ccy === 'CNY' ? '人民币' : '美元'}持仓合计只有 ${fmtN(sumH, w.ccy)}，不够取出`;
+      else {
+        byS.forEach(x => { x.e = Math.min(x.h, Math.max(0, x.c.v - x.c.tgt / 100 * T2)); });
+        const sumE = byS.reduce((a, x) => a + x.e, 0), rest = byS.reduce((a, x) => a + (x.h - x.e), 0);
+        byS.forEach(x => { x.sell = sumE >= A ? A * x.e / sumE : x.e + (A - sumE) * (x.h - x.e) / (rest || 1); });
+        byS.filter(x => x.sell > A * 0.002).sort((a, b) => b.sell - a.sell).forEach(x => { let left = x.sell;
+          x.rs.forEach(r => { if (left <= 0.5) return; const take = Math.min(left, r.value); left -= take; wdTrades.push({ code: r.code, acct: r.acct, cny: take });
+            wdLines.push({ name: x.c.name, dotStyle: dot(x.c.color), amt: fmtN(take, w.ccy), sub: r.ins.market === '现金' ? `直接取现金 · ${acctName(r.acct)}` : `${r.code} ${r.ins.name} · ${acctName(r.acct)}`,
+              move: `${x.c.cur.toFixed(1)}% → ${((x.c.v - x.sell) / T2 * 100).toFixed(1)}%` }); }); });
+      }
+    }
+
+    const openCalib = (acct, code, from) => () => { const p = s.positions.find(x => x.acct === acct && x.code === code);
+      this.setState({ sheet: 'calib', calibErr: null, calib: { acct, code, from, qty: String(+(p ? p.qty : 0).toFixed(4)), reason: '红利再投' } }); };
+    const assetGroups = GROUPS.map(c => {
+      const unders = Object.entries(UNDER).filter(([, u]) => u.g === c.id).map(([uid, u]) => {
+        const rs = rows.filter(r => r.ins.u === uid); if (!rs.length) return null;
+        const codes = [...new Set(rs.map(r => r.code))];
+        const v = rs.reduce((a, r) => a + r.value, 0), cst = rs.reduce((a, r) => a + r.cost, 0), pnl = (v - cst) / cst * 100;
+        return { name: u.name, value: fmtS(v), open: !!s.open['u:' + uid], toggle: () => this.toggle('u:' + uid),
+          sub: `${codes.length} 个品种 · ${new Set(rs.map(r => r.acct)).size} 个账户 · 占 ${(v / total * 100).toFixed(1)}%`,
+          pnl: u.cash ? '' : (pnl >= 0 ? '+' : '') + pnl.toFixed(1) + '%', pnlStyle: `font-size:12px;color:${pnl >= 0 ? 'var(--color-accent-2-800)' : 'var(--color-accent-800)'}`,
+          insts: codes.map(code => { const ir = rs.filter(r => r.code === code), ins = s.insts[code], k = 'i:' + code;
+            return { code, name: ins.name, market: ins.market, ccy: ins.ccy, platCount: ir.length, sub: `${ins.market} · ${ins.ccy} · ${ir.length} 个账户${ins.market === '场外基金' ? ' · 净值 09-28' : ''}`, open: !!s.open[k], toggle: () => this.toggle(k), value: fmtS(ir.reduce((a, r) => a + r.value, 0)),
+              plats: ir.map(r => ({ acct: acctName(r.acct), qty: hide ? MASK : qtyTxt(r.qty), cost: SYM[ins.ccy] + (+r.cost.toFixed(2)), value: fmtS(r.value), calib: openCalib(r.acct, r.code, 'asset') })) }; }) };
+      }).filter(Boolean);
+      const v = rows.filter(r => grpOf(r) === c.id).reduce((a, r) => a + r.value, 0);
+      return { name: c.name, value: fmtS(v), pct: (v / total * 100).toFixed(1), unders, dotStyle: dot(c.color) };
+    }).filter(x => x.unders.length);
+    const accountGroups = s.accts.map(a => { const rs = rows.filter(r => r.acct === a.id), v = rs.reduce((x, r) => x + r.value, 0);
+      const cv = GROUPS.map(c => ({ c, v: rs.filter(r => grpOf(r) === c.id).reduce((x, r) => x + r.value, 0) })).filter(x => x.v > 0);
+      return { id: a.id, name: a.name, meta: `${a.type} · ${a.ccy}`, count: rs.length, raw: v, value: fmtS(v), share: (v / total * 100).toFixed(1),
+        color: a.color, dotStyle: dot(a.color), cv, barSegs: cv.map(x => ({ style: `flex:${x.v};background:${x.c.color}` })),
+        open: () => this.setState({ sheet: 'acct', acctId: a.id }), items: rs.map(r => ({ code: r.code, under: UNDER[r.ins.u].name, value: fmtS(r.value), qty: hide ? MASK : qtyTxt(r.qty), calib: openCalib(r.acct, r.code, 'acct') })) }; });
+    const cur = accountGroups.find(x => x.id === s.acctId);
+    let acc = 0;
+    const stops = cur ? cur.cv.map(x => { const a0 = acc; acc += x.v / (cur.raw || 1) * 100; return `${x.c.color} ${a0}% ${acc}%`; }).join(',') : '';
+    const acctDetail = cur ? { name: cur.name, meta: cur.meta, share: cur.share, value: fmtS(cur.raw), items: cur.items, empty: !cur.cv.length,
+      legend: cur.cv.map(x => ({ name: x.c.name, pct: (x.v / cur.raw * 100).toFixed(0), dotStyle: dot(x.c.color) })),
+      donutStyle: `width:132px;height:132px;flex:none;border-radius:999px;display:grid;place-items:center;background:${stops ? `conic-gradient(${stops})` : 'var(--color-neutral-200)'}` } : {};
+
+    const costTotal = rows.reduce((a, r) => a + r.cost, 0);
+    const endP = s.p0 + s.flows, hk = Math.round(total) + '|' + Math.round(endP) + '|' + Math.round(s.flows);
+    if (this._hk !== hk) { this._hk = hk; this._h = buildHist(total, endP, s.flows); }
+    const { P, V, ev } = this._h;
+    const RD = RANGES[s.range], t0 = D - RD, stepN = Math.max(1, Math.ceil(RD / 420));
+    const ts = []; for (let t = t0; t < D; t += stepN) ts.push(t); ts.push(D);
+    const n = ts.length, W = RD <= 400 ? 350 : RD <= 1100 ? 760 : RD <= 1830 ? 1120 : 1360, H = 150;
+    let mn = Infinity, mx = -Infinity; ts.forEach(t => { mn = Math.min(mn, V[t], P[t]); mx = Math.max(mx, V[t], P[t]); });
+    const pad = (mx - mn) * 0.08 || mx * 0.02; mn -= pad; mx += pad;
+    const X = i => i / (n - 1) * W, Y = v => H - 4 - (v - mn) / (mx - mn) * (H - 10);
+    const vLine = ts.map((t, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(V[t]).toFixed(1)}`).join(' ');
+    const pLine = ts.map((t, i) => i ? `H${X(i).toFixed(1)} V${Y(P[t]).toFixed(1)}` : `M0,${Y(P[t]).toFixed(1)}`).join(' ');
+    const long = RD > 120;
+    const hi = s.hover == null ? n - 1 : Math.min(n - 1, s.hover), th = ts[hi];
+    const netIn = P[D] - P[t0], rGain = (V[D] - V[t0]) - netIn, rBase = V[t0] + Math.max(0, netIn) / 2, rPct = rGain / rBase * 100;
+    const evIn = ev.filter(e => e.t > t0 && e.t <= D);
+    const tIdx = t => Math.min(n - 1, Math.round((t - t0) / stepN));
+    const ticksN = Math.max(3, Math.round(W / 110));
+    const perf = {
+      W, viewBox: `0 0 ${W} 170`, innerStyle: `position:relative;width:${W}px;height:170px;touch-action:pan-x;cursor:crosshair`, scrollable: W > 350,
+      vLine, pLine, area: vLine + ` L${W},${H} L0,${H} Z`, hx: X(hi), hvy: Y(V[th]),
+      events: evIn.map(e => ({ x: X(tIdx(e.t)), y: Y(P[e.t]), fill: e.a > 0 ? 'var(--color-accent-2)' : 'var(--color-accent)' })),
+      ticks: Array.from({ length: ticksN }, (_, k) => { const i = Math.round(k / (ticksN - 1) * (n - 1)); const x = X(i);
+        return { label: fmtDay(ts[i], long), style: `position:absolute;top:154px;left:${Math.min(W - 44, Math.max(0, x - 22))}px;width:44px;text-align:${k === 0 ? 'left' : k === ticksN - 1 ? 'right' : 'center'};font-size:11px;color:var(--color-neutral-700)` }; }),
+      label: s.hover == null ? `总资产 · 当前` : `总资产 · ${fmtDay(th, false)}${long ? ' ' + dayDate(th).getFullYear() : ''}`,
+      big: fmtS(V[th]),
+      gainLine: s.hover == null ? `${s.range}收益 ${hide ? '' : sgn(rGain) + fmtS(Math.abs(rGain)) + ' · '}${sgn(rPct)}${Math.abs(rPct).toFixed(2)}%` : `累计收益 ${hide ? '' : sgn(V[th] - P[th]) + fmtS(Math.abs(V[th] - P[th])) + ' · '}${sgn(V[th] - P[th])}${Math.abs((V[th] - P[th]) / P[th] * 100).toFixed(2)}%`,
+      gainStyle: `font-size:15px;font-weight:700;color:${(s.hover == null ? rGain : V[th] - P[th]) >= 0 ? 'var(--color-accent-2-800)' : 'var(--color-accent-800)'}`,
+      subLine: `净投入本金 ${fmtS(P[th])}`,
+      rangePct: `${sgn(rPct)}${Math.abs(rPct).toFixed(2)}%`, pctStyle: `font-weight:700;font-size:17px;color:${rPct >= 0 ? 'var(--color-accent-2-800)' : 'var(--color-accent-800)'}`,
+      rangeIn: hide ? MASK : (netIn === 0 ? fmtS(0) : sgn(netIn) + fmtS(Math.abs(netIn))),
+      hasFlows: evIn.length > 0,
+      flows: evIn.slice().reverse().map(e => ({ date: `${dayDate(e.t).getFullYear()}-${fmtDay(e.t, false)}`, kind: e.a > 0 ? '入金' : '出金', amt: hide ? MASK : sgn(e.a) + fmtS(Math.abs(e.a)), dotStyle: dot(e.a > 0 ? 'var(--color-accent-2)' : 'var(--color-accent)') })),
+      move: e => { const r = e.currentTarget.getBoundingClientRect(); const i = Math.round((e.clientX - r.left) / r.width * (n - 1)); if (i !== this.state.hover) this.setState({ hover: Math.max(0, Math.min(n - 1, i)) }); },
+      leave: () => this.setState({ hover: null }),
+    };
+    const cp = slots.filter(c => c.v > 0).map(c => {
+      if (s.range === '全部') { const k = slotCost[c.key] || 0, d = c.v - k; return { c, d, pct: k ? d / k * 100 : 0 }; }
+      const R = idx(c.key, D) / idx(c.key, t0) - 1; return { c, d: c.v * R / (1 + R), pct: R * 100 }; });
+    const maxP = Math.max(...cp.map(x => Math.abs(x.pct)), 0.01);
+    const catPnl = cp.map(x => { const pos = x.pct >= 0;
+      return { name: x.c.name, dotStyle: dot(x.c.color), label: `${hide ? '' : sgn(x.d) + fmtS(Math.abs(x.d)) + ' · '}${sgn(x.pct)}${Math.abs(x.pct).toFixed(1)}%`,
+        txtStyle: `font-weight:700;color:${pos ? 'var(--color-accent-2-800)' : 'var(--color-accent-800)'}`,
+        barStyle: `height:100%;width:${Math.abs(x.pct) / maxP * 100}%;border-radius:999px;background:${pos ? 'var(--color-accent-2)' : 'var(--color-accent)'}` }; });
+
+    this._ctx = [
+      `总资产约 ¥${Math.round(total / 1e4)} 万（人民币计），净投入 ¥${Math.round(costTotal / 1e4)} 万。`,
+      `目标组合 vs 当前：` + slots.map(c => `${c.name} ${c.cur.toFixed(1)}%/${c.tgt}%${c.untargeted ? '(未设目标)' : ''}`).join('；'),
+      `偏离阈值 ±${s.threshold}%，${s.period}检查。`,
+      `账户：` + accountGroups.map(a => `${a.name}(${a.meta}) 占${a.share}%`).join('；'),
+      `近1年各资产表现：` + slots.filter(c => c.v > 0).map(c => `${c.name} ${((idx(c.key, D) / idx(c.key, D - 365) - 1) * 100).toFixed(1)}%`).join('；'),
+      `退休目标：年支出 ¥${g.spend}，设定目标 ¥${g.target}，预期年化 ${g.ret}%，通胀 ${g.infl}%，预计 ${yr(g.target)} 年达成。`,
+    ].join('\n');
+
+    const opts = (list, curv, fn) => list.map(v => { const [val, label] = typeof v === 'string' ? [v, v] : v; return { label, on: curv === val, pick: () => fn(val) }; });
+    const TABS = [['perf', '收益'], ['plan', '计划'], ['hold', '持仓'], ['rec', '记录'], ['ai', 'AI 投顾']];
+    const f = s.form, rec = f.code.trim() ? this.lookup(f.code) : null;
+    const tSum = Object.values(s.targets).reduce((a, b) => a + b, 0);
+    const setT = (k, d) => this.setState(st => ({ targets: { ...st.targets, [k]: Math.max(0, Math.min(100, (st.targets[k] || 0) + d)) } }));
+    const gf = (key, label) => ({ label, value: g[key], change: e => { const v = parseFloat(e.target.value); this.setState(st => ({ goal: { ...st.goal, [key]: isNaN(v) ? 0 : v } })); } });
+    const af = s.acctForm, setAF = p => this.setState(st => ({ acctForm: { ...st.acctForm, ...p }, acctErr: null }));
+    const setDep = p => this.setState(st => ({ dep: { ...st.dep, ...p } }));
+    const bucketStocks = Object.keys(UNDER).filter(u => UNDER[u].stock && !s.ownStock[u] && rows.some(r => r.ins.u === u));
+    const targetRows = slots.map(c => ({ name: c.name, tgt: c.tgt, untargeted: c.untargeted, dotStyle: c.dotStyle,
+      inc: () => setT(c.key, 1), dec: () => setT(c.key, -1), canDel: !c.untargeted,
+      del: () => { this.setState(st => { const t = { ...st.targets }; delete t[c.key]; return { targets: t }; }); this.flash(`已移除「${c.name}」的目标`); }, isBucket: c.key === 'stocks', isOwn: !!(UNDER[c.key] && UNDER[c.key].stock),
+      chips: c.key === 'stocks' ? bucketStocks.map(u => ({ label: `${UNDER[u].name} · 单独设`, toggle: () => this.setState(st => {
+        const own = Math.round(rows.filter(r => r.ins.u === u).reduce((a, r) => a + r.value, 0) / total * 100);
+        return { ownStock: { ...st.ownStock, [u]: true }, targets: { ...st.targets, [u]: own, stocks: Math.max(0, (st.targets.stocks || 0) - own) } }; }) })) : [],
+      merge: () => this.setState(st => { const t = { ...st.targets }; const add = t[c.key] || 0; delete t[c.key]; t.stocks = (t.stocks || 0) + add; return { ownStock: { ...st.ownStock, [c.key]: false }, targets: t }; }) }));
+
+    const chip = on => `flex:none;border:0;cursor:pointer;font:inherit;font-size:13px;padding:7px 14px;border-radius:999px;white-space:nowrap;background:${on ? 'var(--color-text)' : 'var(--color-neutral-100)'};color:${on ? 'var(--color-bg)' : 'var(--color-text)'}`;
+    const ago = t => (TODAY - new Date(t.date + 'T00:00:00')) / 864e5;
+    const inTime = t => { const d = new Date(t.date + 'T00:00:00'), y = d.getFullYear();
+      return { '近 7 天': ago(t) <= 7, '近 30 天': ago(t) <= 30, '上个月': y === 2026 && d.getMonth() === 7, '今年': y === 2026, '去年': y === 2025 }[s.recTime] ?? true; };
+    const ftx = s.txns.filter(inTime).filter(t => s.recType === '全部' || t.type === s.recType).sort((a, b) => s.recSort === 'desc' ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date));
+    const txGroups = []; ftx.forEach(t => { const label = `${t.date.slice(0, 4)} 年 ${+t.date.slice(5, 7)} 月`; let gp = txGroups[txGroups.length - 1]; if (!gp || gp.label !== label) { gp = { label, items: [] }; txGroups.push(gp); }
+      const ins = allI[t.code], isC = t.type === '校准', isF = t.type === '入金' || t.type === '出金';
+      gp.items.push({ title: isF ? (t.type === '入金' ? '转入资金' : '转出资金') : `${t.code} ${ins ? ins.name : ''}`, type: t.type, meta: `${acctName(t.acct)} · ${t.date.slice(5)}`,
+        amount: hide ? MASK : isF ? `${t.type === '入金' ? '+' : '−'}${SYM[t.code] || '¥'}${qtyTxt(t.qty)}${t.reason ? ' · ' + t.reason : ''}` : isC ? (t.qty === 0 ? '份额无变化 · 已核对' : `${t.qty > 0 ? '+' : ''}${qtyTxt(t.qty)} 份 · ${t.reason || ''}`) : `${qtyTxt(t.qty)} × ${SYM[ins ? ins.ccy : 'USD']}${t.price}${t.fee ? ' · 费 ' + t.fee : ''}`,
+        typeStyle: `font-size:12px;font-weight:700;text-align:right;color:${t.type === '卖出' || t.type === '出金' ? 'var(--color-accent-700)' : isC ? 'var(--color-neutral-700)' : 'var(--color-accent-2-800)'}` }); });
+    const cb = s.calib; let calibInfo = {};
+    if (cb) { const p = s.positions.find(x => x.acct === cb.acct && x.code === cb.code), ins = s.insts[cb.code], nq = parseFloat(cb.qty), diff = isNaN(nq) || !p ? 0 : nq - p.qty, px = ins.price * FX[ins.ccy];
+      calibInfo = { title: `${cb.code} ${ins.name} · ${acctName(cb.acct)}`, recQty: p ? qtyTxt(p.qty) : '0', value: p ? fmtS(p.qty * px) : fmtS(0), hasDiff: Math.abs(diff) > 1e-9,
+        diffText: `差异 ${diff > 0 ? '+' : '−'}${qtyTxt(Math.abs(diff))} 份 · 市值 ${diff > 0 ? '+' : '−'}${fmtS(Math.abs(diff) * px)}`,
+        diffStyle: `border-radius:14px;padding:10px 14px;font-size:14px;font-weight:700;background:${diff > 0 ? 'var(--color-accent-2-100)' : 'var(--color-accent-100)'};color:${diff > 0 ? 'var(--color-accent-2-900)' : 'var(--color-accent-800)'}` }; }
+    const tSrc = s.tEdit && s.tDraft ? s.tDraft.targets : s.targets;
+    const addable = [...(!('stocks' in tSrc) ? ['stocks'] : []), ...Object.keys(UNDER).filter(k => !(k in tSrc))];
+    const setDraft = fn => this.setState(st => ({ tDraft: { ...st.tDraft, ...fn(st.tDraft) } }));
+    const startEdit = extra => this.setState(st => ({ tEdit: true, tDraft: { targets: { ...Object.fromEntries(Object.entries(st.targets).map(([k, v]) => [k, String(v)])), ...(extra || {}) }, ownStock: { ...st.ownStock } } }));
+    const addToDraft = k => { const isStk = UNDER[k] && UNDER[k].stock; if (s.tEdit) setDraft(d => ({ targets: { ...d.targets, [k]: '0' }, ownStock: isStk ? { ...d.ownStock, [k]: true } : d.ownStock }));
+      else this.setState(st => ({ tEdit: true, tDraft: { targets: { ...Object.fromEntries(Object.entries(st.targets).map(([kk, v]) => [kk, String(v)])), [k]: '0' }, ownStock: isStk ? { ...st.ownStock, [k]: true } : { ...st.ownStock } } })); };
+    const dr = s.tDraft || { targets: {}, ownStock: {} };
+    const ordK = k => { const i = SLOT_ORDER.indexOf(k); return i < 0 ? 50 : i; };
+    const dKeys = Object.keys(dr.targets).sort((a, b) => ordK(a) - ordK(b));
+    const dNum = k => parseFloat(dr.targets[k]), dBad = k => { const n = dNum(k); return String(dr.targets[k]).trim() === '' || isNaN(n) || n < 0 || n > 100; };
+    const dSum = Math.round(dKeys.reduce((a, k) => a + (dBad(k) ? 0 : dNum(k)), 0) * 10) / 10, anyBad = dKeys.some(dBad);
+    const draftMsg = anyBad ? '每项需要填 0–100 之间的数字' : dSum > 100 ? `合计 ${dSum}%，超出 ${Math.round((dSum - 100) * 10) / 10}%，请调低后再保存` : dSum < 100 ? `还差 ${Math.round((100 - dSum) * 10) / 10}% 未分配，合计需要等于 100% 才能保存` : '';
+    const dErr = anyBad || dSum > 100;
+    const heldU = k => k === 'stocks' ? false : rows.some(r => r.ins.u === k);
+    const aic = s.ai, curConv = aic.convs.find(c => c.id === aic.cur), curMsgs = curConv ? curConv.msgs : [];
+    const welcome = () => ({ who: 'ai', time: nowHM(), text: `已连接 ${aic.provider} · ${aic.model}。我读取了你的计划、持仓和收益数据：总资产约 ${fmtS(total)}，目前 ${offN} 项资产偏离目标，最大的是${biggest ? biggest.name : '—'}。\n想从哪里聊起？` });
+    const newConv = () => { const id = 'c' + Date.now(); this.setAIf(a => ({ convs: [{ id, title: '新对话', time: `09-29 ${nowHM()}`, msgs: [welcome()] }, ...a.convs], cur: id, drawer: false })); this.scrollMsgs(); };
+    const fAcct = s.accts.find(a => a.id === s.form.acct), fCC = fAcct && (fAcct.ccy === 'USD' || fAcct.ccy === 'CNY') ? fAcct.ccy : null;
+    const fCash = fCC ? (s.positions.find(x => x.acct === s.form.acct && x.code === fCC) || { qty: 0 }).qty : 0;
+    const fRec = s.form.code.trim() ? this.lookup(s.form.code) : null, fLinked = !!fCC && (fRec ? fRec.ccy : (/^\d+$/.test(s.form.code.trim()) ? 'CNY' : 'USD')) === fCC;
+    const CP = { '月': 30, '季度': 91, '年': 365 }[s.calibPeriod];
+    const lastC = {}; s.txns.forEach(t => { if (t.type === '校准') { const k = t.acct + '|' + t.code; if (!lastC[k] || t.date > lastC[k]) lastC[k] = t.date; } });
+    const calibDue = rows.filter(r => r.ins.market !== '现金').map(r => { const k = r.acct + '|' + r.code, last = lastC[k], big = r.value / total >= 0.03, div = !!(allI[r.code] && allI[r.code].div);
+      return { r, last, big, div, due: (big || div) && (!last || (TODAY - new Date(last + 'T00:00:00')) / 864e5 > CP) }; }).filter(x => x.due).sort((a, b) => b.r.value - a.r.value);
+    const calDays = Math.round(((s.calibPeriod === '年' ? new Date(2027, 0, 1) : new Date(2026, 9, 1)) - TODAY) / 864e5);
+    const ob = s.onb, setOnb = p => this.setState(st => ({ onb: { ...st.onb, err: null, ...p } })), setOnbForm = p => this.setState(st => ({ onb: { ...st.onb, err: null, form: { ...st.onb.form, ...p } } }));
+    const obRec = ob.form.code.trim() ? this.lookup(ob.form.code) : null, obCur = ob.accts.find(a => a.id === ob.cur);
+    const obPreview = (() => { const v = {}; let tot = 0; ob.pos.forEach(p => { const k = UNDER[p.ins.u].stock ? 'stocks' : p.ins.u, x = p.qty * p.cost * FX0[p.ins.ccy]; v[k] = (v[k] || 0) + x; tot += x; });
+      ob.accts.forEach(a => { const c = parseFloat(ob.cash[a.id]) || 0; if (c > 0 && (a.ccy === 'USD' || a.ccy === 'CNY')) { const k = a.ccy.toLowerCase(); v[k] = (v[k] || 0) + c * FX0[a.ccy]; tot += c * FX0[a.ccy]; } });
+      const out = Object.entries(v).map(([k, x]) => ({ k, pct: Math.round(x / (tot || 1) * 100) })).filter(x => x.pct > 0).sort((a, b) => b.pct - a.pct);
+      const diff = 100 - out.reduce((a, x) => a + x.pct, 0); if (out.length) out[0].pct += diff; return out; })();
+    const obAdd = () => { const code = ob.form.code.trim().toUpperCase(), qty = parseFloat(ob.form.qty), cost = parseFloat(ob.form.cost);
+      if (!code && !ob.form.qty && !ob.form.cost) return null;
+      if (!code || !(qty > 0) || !(cost > 0)) return { err: '这一行还没填完整：需要代码、份额和成本价' };
+      const ins = this.lookup(code) || I(code, /^\d+$/.test(code) ? 'CNY' : 'USD', cost, ob.form.under, /^\d+$/.test(code) ? 'A股' : '美股');
+      return { pos: [...ob.pos.filter(p => !(p.acct === ob.cur && p.code === code)), { acct: ob.cur, code, qty, cost, ins }], form: { code: '', qty: '', cost: '', under: ob.form.under } }; };
+    const obFinish = () => {
+      const accts = ob.accts.map((a, i) => ({ ...a, mkt: mktFor(a.type, a.ccy), color: ACOL[i % ACOL.length] }));
+      const insts = { ...INSTS }; ob.pos.forEach(p => { if (!insts[p.code]) insts[p.code] = p.ins; });
+      const positions = ob.pos.map(p => ({ acct: p.acct, code: p.code, qty: p.qty, cost: p.cost }));
+      accts.forEach(a => { const c = parseFloat(ob.cash[a.id]) || 0; if (c > 0 && (a.ccy === 'USD' || a.ccy === 'CNY')) positions.push({ acct: a.id, code: a.ccy, qty: c, cost: 1 }); });
+      const p0 = positions.reduce((x, p) => x + p.qty * p.cost * FX0[insts[p.code].ccy], 0);
+      const targets = {}; if (ob.tmode === 'current') obPreview.forEach(x => { targets[x.k] = x.pct; });
+      this.setState({ accts, insts, positions, txns: [], targets, ownStock: {}, p0, flows: 0, fresh: true, onbShow: false, tab: 'perf', open: {},
+        form: { ...s.form, acct: accts[0].id }, dep: { ...s.dep, acct: (accts.find(a => a.ccy === 'CNY') || accts[0]).id } });
+      this.flash('录入完成，正在拉取最新行情'); this.refresh();
+    };
+    const pullOK = s.pull > 60;
+    const ai = s.ai;
+    const PROV = { Claude: 'sk-ant-…', OpenAI: 'sk-…', DeepSeek: 'sk-…' };
+    return {
+      screenLabel: (TABS.find(t => t[0] === s.tab) || [0, ''])[1] + (s.sub ? ' · ' + (s.sub === 'portfolio' ? '设置组合' : '设置账户') : ''),
+      isPlan: s.tab === 'plan', isHold: s.tab === 'hold', isRec: s.tab === 'rec', isPerf: s.tab === 'perf', isAI: s.tab === 'ai',
+      mainRef: null,
+      pullDown: e => { const mEl = document.querySelector('[data-main]'); if (s.tab !== 'perf' || (e.target.closest && e.target.closest('[data-chart]')) || (mEl && mEl.scrollTop > 0)) return; this._py = e.clientY; },
+      pullMove: e => { if (this._py == null) return; const d = Math.max(0, Math.min(90, (e.clientY - this._py) * 0.6)); if (Math.abs(d - s.pull) > 2) this.setState({ pull: d }); },
+      pullUp: () => { if (this._py == null) return; this._py = null; if (this.state.pull > 60) this.refresh(); this.setState({ pull: 0 }); },
+      pullStyle: `height:${s.pull}px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:${s.pull ? 6 : 0}px;transition:${s.pull ? 'none' : 'height .2s'}`,
+      pullText: pullOK ? '松开刷新行情与汇率' : '下拉刷新',
+      refreshing: s.refreshing, updatedText: s.refreshing ? '正在更新实时价格与汇率…' : s.updated ? `已更新 ${s.updated} · USD/CNY ${FX.USD.toFixed(4)} · 场外基金为 T-1 净值` : '等待更新',
+      hideAmt: hide, showAmt: !hide, toggleHide: () => this.setState({ hide: !hide }),
+      range: s.range, rangeList: Object.keys(RANGES), setRange: e => { this.setState({ range: e.target.value, hover: null }); this.scrollChart(); },
+      perfCcyOpts: opts([['CNY', '人民币'], ['USD', '美元']], ccy, v => this.setState({ ccy: v })),
+      perf, catPnl,
+      ccy, totalTxt: fmtS(total),
+      goal: { year: yr(g.target), year4: yr(need4), total: fmtS(total), ret: g.ret, infl: g.infl, spend: fmtS(g.spend), need4: fmtS(need4), target: fmtS(g.target),
+        pct4: Math.min(100, total / need4 * 100).toFixed(0), pctT: Math.min(100, total / g.target * 100).toFixed(0),
+        fillStyle: `position:absolute;left:0;top:0;bottom:0;width:${total / scale * 100}%;border-radius:999px;background:var(--color-accent)`, mark4Style: mk(need4), markTStyle: mk(g.target) },
+      slots, offTagClass: offN ? 'tag tag-accent' : 'tag tag-accent-2', offTagText: offN ? `${offN} 项偏离` : '均衡',
+      nextCheck: `${s.period}检查 · 还有 ${days} 天`, rebalSummary, rebalSteps: steps,
+      openRebal: () => this.setState({ sheet: 'rebal' }), markDone: () => { this.setState({ sheet: null }); this.flash('已记录本次再平衡'); },
+      openPortfolio: () => this.setState({ sub: 'portfolio' }), openAccounts: () => this.setState({ sub: 'accounts' }), closeSub: () => this.setState({ sub: null }),
+      subPortfolio: s.sub === 'portfolio', subAccounts: s.sub === 'accounts',
+      openDep: () => this.setState({ sheet: 'dep' }), openWd: () => this.setState({ sheet: 'wd' }),
+      sheetDep: s.sheet === 'dep', sheetWd: s.sheet === 'wd', dep: dp, wd: w, depSym: SYM[dp.ccy], wdSym: SYM[w.ccy],
+      depCcyOpts: opts([['CNY', '人民币'], ['USD', '美元']], dp.ccy, v => setDep({ ccy: v, acct: (s.accts.find(a => a.ccy === v) || {}).id })),
+      depModeOpts: opts([['acct', '只在一个账户买'], ['any', '可跨账户']], dp.mode, v => setDep({ mode: v })),
+      depAcctMode: dp.mode === 'acct', depAcctOpts: s.accts.filter(a => a.ccy === dp.ccy),
+      setDepAmt: e => setDep({ amount: e.target.value }), setDepAcct: e => setDep({ acct: e.target.value }),
+      depHas: depLines.length > 0, depLines, depSummary, depNote,
+      applyDep: () => { if (!depTrades.length) return; this.applyTrades(depTrades, '买入', dp.ccy); this.flash(`已记录 ${depTrades.length} 笔买入`); },
+      wdCcyOpts: opts([['CNY', '人民币'], ['USD', '美元']], w.ccy, v => this.setState(st => ({ wd: { ...st.wd, ccy: v } }))),
+      setWdAmt: e => { const v = e.target.value; this.setState(st => ({ wd: { ...st.wd, amount: v } })); },
+      wdHas: wdLines.length > 0, wdLines, wdErr,
+      applyWd: () => { if (!wdTrades.length) return; this.applyTrades(wdTrades, '卖出', w.ccy); this.flash(`已记录 ${wdTrades.length} 笔卖出`); },
+      holdViews: opts([['asset', '按底层资产'], ['acct', '按账户']], s.holdView, v => this.setState({ holdView: v })),
+      isAssetView: s.holdView === 'asset', isAcctView: s.holdView === 'acct', assetGroups, accountGroups,
+      groupLegend: GROUPS.map(c => ({ name: c.name, dotStyle: dot(c.color) })),
+      acctCount: s.accts.length, acctShareSegs: accountGroups.filter(x => x.raw > 0).map(x => ({ style: `flex:${x.raw};background:${x.color}` })),
+      acctDetail, sheetAcct: s.sheet === 'acct' && !!cur, sheetAddAcct: s.sheet === 'addAcct',
+      openAddAcct: () => this.setState({ sheet: 'addAcct', acctErr: null, acctForm: { name: '', type: '券商', ccy: 'USD' } }),
+      acctForm: af, acctErr: s.acctErr, setAcctName: e => setAF({ name: e.target.value }),
+      acctTypeOpts: opts(['券商', '银行'], af.type, v => setAF({ type: v })), acctCcyOpts: opts(['USD', 'CNY', 'HKD'], af.ccy, v => setAF({ ccy: v })),
+      saveAcct: () => { const name = af.name.trim(); if (!name) return this.setState({ acctErr: '请填写账户名称' });
+        if (s.accts.some(a => a.name === name)) return this.setState({ acctErr: '已有同名账户' });
+        this.setState(st => ({ accts: [...st.accts, { id: 'a' + Date.now(), name, type: af.type, ccy: af.ccy, mkt: mktFor(af.type, af.ccy), color: ACOL[st.accts.length % ACOL.length] }], sheet: null }));
+        this.flash(`已添加账户 · ${name}`); },
+      txns: s.txns.map(t => { const ins = allI[t.code];
+        return { title: `${t.code} ${ins ? ins.name : ''}`, type: t.type, meta: `${acctName(t.acct)} · ${t.date}`, amount: hide ? MASK : `${qtyTxt(t.qty)} × ${SYM[ins ? ins.ccy : 'USD']}${t.price}`,
+          typeStyle: `font-size:12px;font-weight:700;text-align:right;color:${t.type === '卖出' ? 'var(--color-accent-700)' : 'var(--color-accent-2-800)'}` }; }),
+      openAdd: () => this.setState({ sheet: 'add', formErr: null }), sheetRebal: s.sheet === 'rebal', sheetAdd: s.sheet === 'add',
+      closeSheet: () => this.setState({ sheet: null }), stop: e => e.stopPropagation(),
+      form: f, formErr: s.formErr, typeOpts: opts(['买入', '卖出', '入金', '出金'], f.type, v => this.setForm({ type: v })),
+      isTradeForm: f.type === '买入' || f.type === '卖出', isCashForm: f.type === '入金' || f.type === '出金', cashSym: fAcct ? SYM[fAcct.ccy] : '¥',
+      setFee: e => this.setForm({ fee: e.target.value }), setAmount: e => this.setForm({ amount: e.target.value }),
+      tradeHint: f.type === '买入' ? (fLinked ? `从${fAcct.name}的${fAcct.ccy}现金扣款（当前 ${SYM[fAcct.ccy]}${qtyTxt(fCash)}），不足部分自动记为入金。` : '品种币种和账户不同，这笔买入会记为新入金。手续费计入成本。') : (fLinked ? '卖出所得（扣除手续费）计入账户现金，不影响本金线。' : '卖出所得记为出金。'),
+      cashHint: f.type === '入金' ? '从组合外转入的钱（工资、存款等），会让收益页的本金线上升。' : `转出组合的钱，会让本金线下降。当前账户现金 ${fAcct ? SYM[fAcct.ccy] : ''}${qtyTxt(fCash)}。`,
+      acctOpts: s.accts, underOpts: Object.entries(UNDER).map(([id, u]) => ({ id, name: `${u.name}（${GROUPS.find(c => c.id === u.g).name}）` })),
+      recOk: !!rec, recText: rec ? `识别为：${UNDER[rec.u].name} · ${GROUPS.find(c => c.id === UNDER[rec.u].g).name} · ${rec.market}` : '',
+      needUnder: !!f.code.trim() && !rec, formCcy: rec ? rec.ccy : (/^\d+$/.test(f.code.trim()) ? 'CNY' : 'USD'),
+      setAcct: e => this.setForm({ acct: e.target.value }), setCode: e => this.setForm({ code: e.target.value }),
+      setUnder: e => this.setForm({ under: e.target.value }), setQty: e => this.setForm({ qty: e.target.value }),
+      setPrice: e => this.setForm({ price: e.target.value }), save: () => this.save(),
+      ccyOpts: opts(['CNY', 'USD', 'HKD'], ccy, v => this.setState({ ccy: v })), fxText: `汇率自动更新 · USD ${FX.USD.toFixed(4)} · HKD ${FX.HKD}`,
+      targetSum: tSum, sumStyle: `white-space:nowrap;flex:none;font-size:13px;font-weight:700;color:${tSum === 100 ? 'var(--color-accent-2-800)' : 'var(--color-accent-800)'}`, targetRows,
+      threshold: s.threshold, thInc: () => this.setState(st => ({ threshold: Math.min(20, st.threshold + 1) })), thDec: () => this.setState(st => ({ threshold: Math.max(1, st.threshold - 1) })),
+      periodOpts: opts(['月', '季度', '年'], s.period, v => this.setState({ period: v })),
+      goalFields: [gf('spend', '退休后年支出（¥）'), gf('target', '设定目标金额（¥）'), gf('ret', '预期年化回报 %'), gf('infl', '通胀率 %')],
+      ai, aiOnboard: !ai.connected, aiChat: ai.connected,
+      provList: [['DeepSeek', '国内 · OpenAI 兼容接口', '第一期', false], ['通义千问 · Kimi · 智谱', '国内', '即将支持', true], ['Claude · OpenAI · Gemini', '海外', '即将支持', true]].map(([name, desc, tag, disabled]) => { const on = !disabled;
+        return { name, desc, tag, disabled, tagClass: on ? 'tag tag-accent' : 'tag tag-neutral', pick: () => {},
+          style: `display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;padding:12px 14px;border-radius:16px;border:2px solid ${on ? 'var(--color-accent)' : 'var(--color-neutral-200)'};background:${on ? 'var(--color-accent-100)' : 'var(--color-neutral-100)'};opacity:${disabled ? 0.55 : 1};cursor:${disabled ? 'not-allowed' : 'default'}` }; }),
+      setKey: e => this.setAI({ key: e.target.value, status: null }), setBase: e => this.setAI({ base: e.target.value, status: null }), setModel: e => this.setAI({ model: e.target.value, status: null }),
+      testAI: () => this.testAI(), aiTesting: ai.status === 'testing', aiNotOk: ai.status !== 'ok' || !ai.consent, consentOn: !!ai.consent, toggleConsent: () => this.setAI({ consent: !ai.consent }), testLabel: ai.status === 'testing' ? '测试中…' : '测试连接',
+      aiStatusShow: !!ai.status, aiStatusTitle: { testing: '正在测试连通性…', ok: '连接成功', fail: '连接失败' }[ai.status] || '', aiStatusMsg: ai.status === 'testing' ? `请求 ${ai.base}/models` : ai.statusMsg,
+      aiStatusStyle: `border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;background:${ai.status === 'ok' ? 'var(--color-accent-2-100)' : ai.status === 'fail' ? 'var(--color-accent-100)' : 'var(--color-neutral-100)'};color:${ai.status === 'ok' ? 'var(--color-accent-2-900)' : ai.status === 'fail' ? 'var(--color-accent-800)' : 'var(--color-text)'}`,
+      connectAI: () => { if (ai.status !== 'ok' || !ai.consent) return; this.setAI({ connected: true }); newConv(); },
+      disconnectAI: () => this.setAI({ connected: false, key: '', status: null, drawer: false }),
+      newConv, openDrawer: () => this.setAI({ drawer: true }), closeDrawer: () => this.setAI({ drawer: false }),
+      convTitle: curConv ? curConv.title : '我的组合', connLabel: `${ai.provider} · ${ai.model} · 已连接`,
+      convList: ai.convs.map(c => ({ title: c.title, meta: `${c.time} · ${c.msgs.length} 条消息`, pick: () => { this.setAI({ cur: c.id, drawer: false }); this.scrollMsgs(); },
+        style: `display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;border:0;font:inherit;color:inherit;cursor:pointer;padding:10px 12px;border-radius:14px;background:${c.id === ai.cur ? 'var(--color-neutral-100)' : 'transparent'}` })),
+      webClass: ai.web ? 'tag tag-accent' : 'tag tag-outline', webText: ai.web ? '联网分析 · 开' : '联网分析 · 关', toggleWeb: () => this.setAI({ web: !ai.web }),
+      webHint: ai.web ? '并查询最新市场信息' : '',
+      msgs: curMsgs.map(m => ({ ...m, name: m.who === 'ai' ? 'AI 投顾' : '我', av: m.who === 'ai' ? 'AI' : '我',
+        avStyle: `width:36px;height:36px;border-radius:999px;display:grid;place-items:center;font-size:13px;font-weight:700;background:${m.who === 'ai' ? 'var(--color-accent-2-200)' : 'var(--color-accent-200)'};color:${m.who === 'ai' ? 'var(--color-accent-2-900)' : 'var(--color-accent-900)'}` })),
+      showSuggest: curMsgs.length <= 1 && !ai.busy,
+      suggests: ['我的组合风险集中在哪？', '这笔 ¥10 万该怎么投？', '美债超配要不要现在调？', '离退休目标还差多少？'].map(t => ({ text: t, send: () => this.ask(t) })),
+      setInput: e => this.setAI({ input: e.target.value }), inputKey: e => { if (e.key === 'Enter') this.ask(this.state.ai.input); }, sendMsg: () => this.ask(ai.input),
+      recTimeOpts: ['全部', '近 7 天', '近 30 天', '上个月', '今年', '去年'].map(l => ({ label: l, style: chip(s.recTime === l), pick: () => this.setState({ recTime: l }) })),
+      recTypeOpts: opts(['全部', '买入', '卖出', '入金', '出金', '校准'], s.recType, v => this.setState({ recType: v })),
+      sortLabel: s.recSort === 'desc' ? '最新在前 ↓' : '最早在前 ↑', toggleSort: () => this.setState({ recSort: s.recSort === 'desc' ? 'asc' : 'desc' }),
+      recCount: `共 ${ftx.length} 条记录`, recEmpty: ftx.length === 0, txGroups,
+      sheetCalib: s.sheet === 'calib' && !!cb, calib: cb || {}, calibInfo, calibErr: s.calibErr,
+      setCalibQty: e => { const v = e.target.value; this.setState(st => ({ calib: { ...st.calib, qty: v }, calibErr: null })); },
+      calibReasonOpts: opts(['红利再投', '拆股合股', '手动修正'], cb ? cb.reason : '', v => this.setState(st => ({ calib: { ...st.calib, reason: v } }))),
+      saveCalib: () => this.saveCalib(), closeCalib: () => this.setState({ sheet: cb && cb.from === 'acct' ? 'acct' : cb && cb.from === 'list' ? 'calibList' : null }),
+      isFresh: s.fresh, hasHist: !s.fresh,
+      calibNext: `${s.calibPeriod}校准 · 还有 ${calDays} 天`, calibHasDue: calibDue.length > 0, calibNone: calibDue.length === 0,
+      calibSummary: calibDue.length ? `${calibDue.length} 项待核对：${calibDue.slice(0, 3).map(x => x.r.code).join('、')}${calibDue.length > 3 ? ' 等' : ''}。大额持仓和红利再投的品种，份额可能已经变化。` : '大额和红利再投的持仓都已在本周期核对过。',
+      openCalibList: () => this.setState({ sheet: 'calibList' }), sheetCalibList: s.sheet === 'calibList',
+      calibItems: calibDue.map(x => ({ name: `${x.r.code} ${x.r.ins.name}`, value: fmtS(x.r.value), open: openCalib(x.r.acct, x.r.code, 'list'),
+        sub: `${acctName(x.r.acct)} · ${hide ? MASK : qtyTxt(x.r.qty)} 份 · ${x.last ? '上次 ' + x.last.slice(5) : '从未校准'}`, tagText: [x.big && '大额', x.div && '红利再投'].filter(Boolean).join(' · ') })),
+      markAllChecked: () => { if (!calibDue.length) return; this.setState(st => ({ txns: [...calibDue.map(x => T('2026-09-29', '校准', x.r.acct, x.r.code, 0, x.r.ins.price, '已核对')), ...st.txns], sheet: null })); this.flash(`已标记 ${calibDue.length} 项为已核对`); },
+      calibPeriodOpts: opts(['月', '季度', '年'], s.calibPeriod, v => this.setState({ calibPeriod: v })),
+      exportJSON: () => { download('portfolio-backup-2026-09-29.json', JSON.stringify({ exportedAt: new Date().toISOString(), accounts: s.accts, positions: s.positions, transactions: s.txns, targets: s.targets, plan: { threshold: s.threshold, period: s.period, calibPeriod: s.calibPeriod, goal: s.goal } }, null, 2), 'application/json'); this.flash('已导出完整备份'); },
+      exportCSV: () => { const lines = ['日期,类型,账户,代码,数量,价格,手续费,备注', ...s.txns.map(t => [t.date, t.type, acctName(t.acct), t.code, t.qty, t.price, t.fee || '', t.reason || ''].join(','))]; download('transactions-2026-09-29.csv', lines.join('\n'), 'text/csv'); this.flash('已导出流水'); },
+      showOnb: s.onbShow, onb: ob, onbStep0: ob.step === 0, onbStep1: ob.step === 1, onbStep2: ob.step === 2, onbStep3: ob.step === 3,
+      onbStart: () => setOnb({ step: 1 }), onbDemo: () => this.setState({ onbShow: false }), onbBack: () => setOnb({ step: Math.max(0, ob.step - 1) }),
+      presetChips: PRESETS.map(([name, ccy, type]) => { const on = ob.accts.some(a => a.name === name);
+        return { label: `${name} · ${ccy}`, style: chip(on), pick: () => setOnb({ accts: on ? ob.accts.filter(a => a.name !== name) : [...ob.accts, { id: 'o' + Date.now(), name, ccy, type: type || '券商' }] }) }; }),
+      onbSetCustom: e => setOnb({ custom: e.target.value }), onbCcyOpts: opts(['USD', 'CNY'], ob.customCcy, v => setOnb({ customCcy: v })),
+      onbAddCustom: () => { const n = ob.custom.trim(); if (!n) return setOnb({ err: '请填写账户名称' }); if (ob.accts.some(a => a.name === n)) return setOnb({ err: '已添加过这个账户' });
+        setOnb({ accts: [...ob.accts, { id: 'o' + Date.now(), name: n, ccy: ob.customCcy, type: '券商' }], custom: '' }); },
+      onbAcctCount: ob.accts.length ? `已选 ${ob.accts.length} 个：${ob.accts.map(a => a.name).join('、')}` : '点选上面的常用平台，或添加其他账户',
+      onbNext1: () => ob.accts.length ? setOnb({ step: 2, cur: ob.cur && ob.accts.some(a => a.id === ob.cur) ? ob.cur : ob.accts[0].id }) : setOnb({ err: '至少选择一个账户' }),
+      onbAcctTabs: ob.accts.map(a => ({ label: `${a.name} · ${ob.pos.filter(p => p.acct === a.id).length}`, style: chip(a.id === ob.cur), pick: () => { const r = obAdd(); if (r && r.err) return setOnb({ err: r.err }); setOnb({ ...(r || {}), cur: a.id }); } })),
+      onbRows: ob.pos.filter(p => p.acct === ob.cur).map(p => ({ title: `${p.code} ${p.ins.name}`, sub: `${qtyTxt(p.qty)} 份 @ ${SYM[p.ins.ccy]}${p.cost} · ${UNDER[p.ins.u].name}`,
+        del: () => setOnb({ pos: ob.pos.filter(x => x !== p) }) })),
+      onbNoRows: !ob.pos.some(p => p.acct === ob.cur),
+      onbSetCode: e => setOnbForm({ code: e.target.value }), onbSetQty: e => setOnbForm({ qty: e.target.value }), onbSetCost: e => setOnbForm({ cost: e.target.value }), onbSetUnder: e => setOnbForm({ under: e.target.value }),
+      onbRecOk: !!obRec, onbRecText: obRec ? `识别为：${UNDER[obRec.u].name} · ${obRec.market} · ${obRec.ccy}` : '', onbNeedUnder: !!ob.form.code.trim() && !obRec,
+      onbAddPos: () => { const r = obAdd(); if (!r) return setOnb({ err: '请填写代码、份额和成本价' }); if (r.err) return setOnb({ err: r.err }); setOnb(r); this.flash('已添加 · 可以继续录入下一条'); },
+      onbCurName: obCur ? obCur.name : '', onbNoPos: ob.pos.length === 0,
+      onbCashOk: !!obCur && (obCur.ccy === 'USD' || obCur.ccy === 'CNY'), onbCashLabel: obCur ? `${obCur.name} 的现金余额（${SYM[obCur.ccy]}）` : '', onbCashVal: obCur ? (ob.cash[obCur.id] || '') : '',
+      onbSetCash: e => { const v = e.target.value; this.setState(st => ({ onb: { ...st.onb, cash: { ...st.onb.cash, [st.onb.cur]: v } } })); },
+      onbNext2: () => { const r = obAdd(); if (r && r.err) return setOnb({ err: r.err }); const pos = r ? r.pos : ob.pos;
+        (pos.length || Object.values(ob.cash).some(v => parseFloat(v) > 0)) ? setOnb({ ...(r || {}), step: 3 }) : setOnb({ err: '至少录入一条持仓或一笔现金' }); },
+      onbTmodes: [['current', '按当前持仓比例生成', '先把现状当作目标，之后在「计划 · 设置组合」里慢慢调'], ['later', '暂不设目标', '所有持仓会显示为「未定义」，再平衡建议暂不可用']].map(([k, title, desc]) => ({ title, desc, pick: () => setOnb({ tmode: k }),
+        style: `display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;padding:14px 16px;border-radius:16px;border:2px solid ${ob.tmode === k ? 'var(--color-accent)' : 'var(--color-neutral-200)'};background:${ob.tmode === k ? 'var(--color-accent-100)' : 'var(--color-neutral-100)'}` })),
+      onbShowPreview: ob.tmode === 'current' && obPreview.length > 0,
+      onbPreview: obPreview.map(x => ({ name: x.k === 'stocks' ? '个股合计' : UNDER[x.k].name, pct: x.pct, dotStyle: dot(SLOTCOL[x.k] || 'var(--color-neutral-400)') })),
+      onbSummary: `${ob.accts.length} 个账户 · ${ob.pos.length} 条持仓。完成后会拉取最新行情，收益曲线从今天开始记录。`, onbFinish: obFinish,
+      sheetAddTarget: s.sheet === 'addTarget', openAddTarget: () => this.setState({ sheet: 'addTarget', customErr: null }),
+      addableList: addable.map(k => ({ name: (k === 'stocks' ? '个股合计' : UNDER[k].name) + (heldU(k) ? ' · 持有中' : ''),
+        add: () => { addToDraft(k); this.setState({ sheet: null }); this.flash(`已加入 · ${k === 'stocks' ? '个股合计' : UNDER[k].name}，填上目标比例后保存`); } })),
+      noAddable: addable.length === 0, customName: s.customName, customGroup: s.customGroup, customErr: s.customErr,
+      groupOpts: GROUPS.filter(x => x.id !== 'cash'), setCustomName: e => this.setState({ customName: e.target.value, customErr: null }), setCustomGroup: e => this.setState({ customGroup: e.target.value }),
+      addCustom: () => { const name = s.customName.trim(); if (!name) return this.setState({ customErr: '请填写资产名称' });
+        if (Object.values(UNDER).some(u => u.name === name)) return this.setState({ customErr: '已有同名资产' });
+        const id = 'x' + Date.now(), n = Object.keys(UNDER).filter(k => k[0] === 'x').length; UNDER[id] = { name, g: s.customGroup }; SLOTCOL[id] = CUSTOMCOL[n % CUSTOMCOL.length];
+        addToDraft(id); this.setState({ customName: '', sheet: null }); this.flash(`已添加自定义资产 · ${name}`); },
+      tView: !s.tEdit, tEditing: s.tEdit, startEditT: () => startEdit(), cancelT: () => this.setState({ tEdit: false, tDraft: null }),
+      tViewRows: Object.keys(s.targets).sort((a, b) => ordK(a) - ordK(b)).map(k => ({ name: slotName(k), pct: s.targets[k], dotStyle: dot(SLOTCOL[k] || 'var(--color-neutral-400)'),
+        barStyle: `height:100%;width:${Math.min(100, s.targets[k])}%;border-radius:999px;background:${SLOTCOL[k] || 'var(--color-neutral-400)'}` })),
+      tEditRows: dKeys.map(k => ({ name: slotName(k), val: dr.targets[k], dotStyle: dot(SLOTCOL[k] || 'var(--color-neutral-400)'),
+        inputStyle: `width:72px;min-height:36px;text-align:right;padding-inline:10px;font-weight:700;${dBad(k) ? 'border-color:var(--color-accent);background:var(--color-accent-100)' : ''}`,
+        change: e => { const v = e.target.value; setDraft(d => ({ targets: { ...d.targets, [k]: v } })); },
+        del: () => setDraft(d => { const t = { ...d.targets }; delete t[k]; return { targets: t, ownStock: UNDER[k] && UNDER[k].stock ? { ...d.ownStock, [k]: false } : d.ownStock }; }),
+        isBucket: k === 'stocks', isOwn: !!(UNDER[k] && UNDER[k].stock),
+        chips: k === 'stocks' ? Object.keys(UNDER).filter(u => UNDER[u].stock && !dr.ownStock[u] && rows.some(r => r.ins.u === u)).map(u => ({ label: `${UNDER[u].name} · 拆出单独设`, toggle: () => setDraft(d => ({ targets: { ...d.targets, [u]: '0' }, ownStock: { ...d.ownStock, [u]: true } })) })) : [],
+        merge: () => setDraft(d => { const t = { ...d.targets }, add = parseFloat(t[k]) || 0; delete t[k]; t.stocks = String(Math.round(((parseFloat(t.stocks) || 0) + add) * 10) / 10); return { targets: t, ownStock: { ...d.ownStock, [k]: false } }; }) })),
+      draftEmpty: dKeys.length === 0, draftSum: dSum, draftMsg, draftInvalid: !!draftMsg,
+      draftSumStyle: `font-weight:700;color:${dErr ? 'var(--color-accent-800)' : dSum === 100 ? 'var(--color-accent-2-800)' : 'var(--color-text)'}`,
+      draftMsgStyle: `font-size:13px;line-height:1.5;color:${dErr ? 'var(--color-accent-800)' : 'var(--color-neutral-700)'}`,
+      saveT: () => { if (draftMsg) return; const t = {}; dKeys.forEach(k => { t[k] = Math.round(dNum(k) * 10) / 10; }); this.setState({ targets: t, ownStock: dr.ownStock, tEdit: false, tDraft: null }); this.flash('目标组合已保存'); },
+      undefRows: slots.filter(c => c.untargeted && c.v > 0).map(c => ({ name: c.name, dotStyle: c.dotStyle, sub: `当前 ${c.curTxt}% · ${fmtS(c.v)}`, add: () => { addToDraft(c.key); this.flash(`已加入编辑：${c.name}，填上目标比例后保存`); } })),
+      hasUndef: slots.some(c => c.untargeted && c.v > 0), noUndef: !slots.some(c => c.untargeted && c.v > 0), undefCount: `${slots.filter(c => c.untargeted && c.v > 0).length} 项`,
+      undefModeOpts: opts([['sell', '再平衡时建议卖出'], ['ignore', '不参与再平衡']], s.ignoreUndef ? 'ignore' : 'sell', v => this.setState({ ignoreUndef: v === 'ignore' })),
+      toast: s.toast,
+      tabs: TABS.map(([id, name]) => ({ name, go: () => { this.setState({ tab: id, sheet: null, sub: null }); if (id === 'perf') this.scrollChart(); if (id === 'ai') this.scrollMsgs(); },
+        style: `display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:none;border:0;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer;font-weight:${s.tab === id ? 700 : 500};color:${s.tab === id ? 'var(--color-text)' : 'var(--color-neutral-600)'}`,
+        dotStyle: `width:6px;height:6px;border-radius:999px;background:${s.tab === id ? 'var(--color-accent)' : 'transparent'}` })),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+/* The Returns page. Sizes, font sizes and colors as in prototype v5 lines 20–97. */
+
+.perf {
+  min-height: 100%;
+}
+.perf-pull {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--color-neutral-700);
+}
+.perf-pull.is-released { transition: height 0.2s; }
+
+.perf-header { display: flex; justify-content: space-between; align-items: center; }
+.perf-controls { display: flex; gap: 8px; align-items: center; }
+.perf-controls .input { width: auto; flex: none; }
+.perf-controls .seg { flex: none; }
+.perf-controls .seg-opt { white-space: nowrap; flex: none; }
+
+.perf-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-neutral-700); }
+.perf-spinner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--color-neutral-400);
+  border-top-color: var(--color-accent);
+  animation: perf-spin 0.8s linear infinite;
+}
+@keyframes perf-spin { to { transform: rotate(360deg); } }
+
+.perf-fresh {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background: var(--color-neutral-100);
+}
+.perf-fresh-label { font-size: 13px; color: var(--color-neutral-700); }
+.perf-fresh-total { font-size: 32px; font-weight: 700; }
+.perf-fresh-note { font-size: 14px; line-height: 1.6; color: var(--color-neutral-800); }
+
+.perf-readout { display: flex; flex-direction: column; gap: 4px; }
+.perf-readout-label { font-size: 13px; color: var(--color-neutral-700); }
+.perf-readout-big { font-size: 32px; font-weight: 700; line-height: 1.1; }
+.perf-readout-gain { font-size: 15px; font-weight: 700; }
+.perf-readout-sub { font-size: 13px; color: var(--color-neutral-700); }
+
+.perf-chart { display: flex; flex-direction: column; gap: 8px; }
+.perf-chart-scroll { width: 100%; overflow-x: auto; scrollbar-width: none; }
+.perf-chart-scroll::-webkit-scrollbar { display: none; }
+.perf-chart-inner { position: relative; height: 170px; cursor: crosshair; }
+.perf-chart-inner svg { display: block; overflow: visible; }
+.perf-tick {
+  position: absolute;
+  top: 154px;
+  width: 44px;
+  font-size: 11px;
+  color: var(--color-neutral-700);
+}
+.perf-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--color-neutral-700); }
+.perf-legend span { display: flex; align-items: center; gap: 6px; }
+.perf-swatch-line { width: 14px; height: 3px; border-radius: 2px; background: var(--color-accent); }
+.perf-swatch-dash { width: 14px; height: 0; border-top: 2px dashed var(--color-neutral-500); }
+
+.dot-sm { width: 9px; height: 9px; flex: none; border-radius: 50%; }
+
+.perf-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.perf-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-100);
+}
+.perf-card-label { font-size: 12px; color: var(--color-neutral-700); }
+.perf-card-value { font-size: 17px; font-weight: 700; }
+
+.perf-section { display: flex; flex-direction: column; gap: 6px; }
+.perf-section-title { font-size: 15px; font-weight: 700; }
+.perf-flows { padding: 2px 16px; border-radius: var(--radius-md); background: var(--color-neutral-100); }
+.perf-flow {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+.perf-flow-left { display: flex; align-items: center; gap: 8px; }
+.perf-flow-amount { font-weight: 600; }
+.perf-note { font-size: 12px; line-height: 1.5; color: var(--color-neutral-700); }
+
+.perf-assets { display: flex; flex-direction: column; gap: 12px; }
+.perf-assets-title { font-size: 17px; font-weight: 700; }
+.perf-asset { display: flex; flex-direction: column; gap: 6px; }
+.perf-asset-row { display: flex; justify-content: space-between; font-size: 14px; }
+.perf-asset-name { display: flex; align-items: center; gap: 8px; }
+.perf-asset-label { font-weight: 700; }
+.perf-bar { height: 8px; border-radius: 999px; background: var(--color-neutral-200); }
+.perf-bar-fill { height: 100%; border-radius: 999px; }

@@ -1,0 +1,13 @@
+// The front end (PWA): static assets on a Cloudflare Worker; no code runs. See DEPLOY.md.
+// After a push to main, Workers Builds runs npm run build, then npx wrangler deploy, which deploys dist.
+// Add the custom domain (e.g. app.example.com) under Domains in the dashboard; it isn't set here, so deploys leave it alone.
+// workers.dev and preview URLs are both off; only your own domain is used. The quotes Worker's config template is worker/wrangler.example.jsonc.
+{
+	"name": "invest-manager",
+	"compatibility_date": "2026-10-01",
+	"assets": {
+		"directory": "./dist"
+	},
+	"workers_dev": false,
+	"preview_urls": false
+}

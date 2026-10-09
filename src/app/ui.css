@@ -1,0 +1,109 @@
+/* Shared interface: overlays, bottom sheets, sub-pages, toasts, cards. Sizes as in the prototype. */
+
+.app-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.app-overlay > * { pointer-events: auto; }
+
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  background: color-mix(in srgb, var(--color-text) 28%, transparent);
+}
+.sheet {
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 20px calc(28px + env(safe-area-inset-bottom));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-bg);
+  scrollbar-width: none;
+}
+.sheet::-webkit-scrollbar { display: none; }
+.sheet-head { display: flex; flex-direction: column; gap: 4px; }
+/* Like .page-title: the body line height */
+.sheet-title { margin: 0; font-size: 22px; line-height: inherit; letter-spacing: 0; }
+.sheet-subtitle { margin: 0; font-size: 13px; color: var(--color-neutral-700); }
+.actions { display: flex; gap: 8px; }
+
+.subpage {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding-top: env(safe-area-inset-top);
+  background: var(--color-bg);
+  scrollbar-width: none;
+}
+.subpage::-webkit-scrollbar { display: none; }
+.subpage-body { display: flex; flex-direction: column; gap: 22px; padding: 20px 20px 40px; }
+.subpage-back { align-self: flex-start; padding-left: 0; }
+
+.toast {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: calc(var(--tabbar-height) + 14px);
+  z-index: 20;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Light card: neutral-100 background, large corners */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--color-neutral-100);
+}
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.panel-title { font-weight: 700; }
+.panel-meta { font-size: 12px; color: var(--color-neutral-700); }
+.panel-text { font-size: 14px; line-height: 1.55; color: var(--color-neutral-800); }
+
+/* The list box inside a sheet. In the prototype every row, the last one included, has a bottom border. */
+.list-box { padding: 4px 16px; border-radius: var(--radius-md); background: var(--color-neutral-100); }
+.list-box.tight { padding: 4px 14px; }
+.list-box.flat { padding: 2px 16px; }
+.list-row { padding: 11px 0; border-bottom: 1px solid var(--color-neutral-200); }
+.list-empty { display: block; font-size: 13px; color: var(--color-neutral-700); }
+
+/* Text for screen readers only (e.g. an input's label) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Errors: 13px throughout the prototype, with no line height of their own */
+.text-error { font-size: 13px; color: var(--color-accent-800); }
+/* 12px notes (e.g. "underweight but can't be bought") */
+.text-warn { font-size: 12px; line-height: 1.5; color: var(--color-accent-800); }
+.text-note { font-size: 12px; line-height: 1.5; color: var(--color-neutral-700); }
+/* 13px notes and empty states */
+.text-hint { font-size: 13px; line-height: 1.5; color: var(--color-neutral-700); }
+
+/* A sub-page title with a button on the right (account Settings' "+ Add account") */
+.subpage-title-row { display: flex; justify-content: space-between; align-items: center; }
+
+/* Shared by several pages: left-aligned, not stretched (segmented controls, tags, secondary buttons) */
+.align-start { align-self: flex-start; }
+
+/* Shared by several pages: category dots, gain and loss colors */
+.dot { width: 10px; height: 10px; flex: none; border-radius: 50%; }
+.is-gain { color: var(--color-accent-2-800); }
+.is-loss { color: var(--color-accent-800); }

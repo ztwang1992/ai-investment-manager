@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env*.local
+.dev.vars
+.wrangler/
+# Your quotes Worker deployment (domain, KV id); the repository holds worker/wrangler.example.jsonc
+worker/wrangler.jsonc
+.DS_Store
+*.log
+*.tsbuildinfo

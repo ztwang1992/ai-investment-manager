@@ -1,0 +1,117 @@
+/* Shell layout. The tab bar follows README「底部 5 个标签」: 78px high; on iPhones with a home indicator it also leaves room for the safe area. */
+
+.app-frame {
+  --tabbar-pad-bottom: max(18px, env(safe-area-inset-bottom));
+  --tabbar-height: calc(60px + var(--tabbar-pad-bottom));
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.app-main {
+  position: absolute;
+  inset: 0 0 var(--tabbar-height) 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: env(safe-area-inset-top);
+  scrollbar-width: none;
+}
+.app-main::-webkit-scrollbar { display: none; }
+
+.tabbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--tabbar-height);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 6px 6px var(--tabbar-pad-bottom);
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.tabbar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: 0;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--color-neutral-600);
+  cursor: pointer;
+}
+.tabbar-item[aria-current='page'] {
+  font-weight: 700;
+  color: var(--color-text);
+}
+.tabbar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: transparent;
+}
+.tabbar-item[aria-current='page'] .tabbar-dot { background: var(--color-accent); }
+.tabbar-label { position: relative; }
+/* Pending sync: a small dot at the top right of the tab label (distinct from the dot above it that marks the current page) */
+.tabbar-badge { position: absolute; top: 1px; right: -8px; width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); }
+
+/* Wide screens: a 390 × 844 phone frame in the center, as in the prototype */
+@media (min-width: 500px) {
+  .app-backdrop {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: var(--color-neutral-200);
+  }
+  .app-frame {
+    --tabbar-pad-bottom: 18px;
+    width: 390px;
+    /* When the window isn't tall enough, shorten the phone frame; the tab bar stays visible */
+    height: min(844px, calc(100dvh - 48px));
+    border-radius: var(--radius-frame);
+    box-shadow: var(--shadow-lg);
+  }
+  .app-main { padding-top: 0; }
+}
+
+/* Page container: 20px left and right; page title as in the prototype (Caprasimo 26px) */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 20px;
+}
+/* The prototype's title is a span with the body line height (1.55), not a heading's tight default */
+.page-title {
+  margin: 0;
+  font-size: 26px;
+  line-height: inherit;
+  letter-spacing: 0;
+}
+
+/* The banner at the top while viewing the sample data: fixed at the top, with the page starting below it */
+.demo-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 48px;
+  padding: calc(env(safe-area-inset-top) + 6px) 16px 6px;
+  background: var(--color-accent-100);
+  color: var(--color-accent-800);
+  font-size: 13px;
+}
+.demo-start { min-height: 32px; padding-block: 0; font-size: 13px; }
+.app-main.with-demo { top: calc(env(safe-area-inset-top) + 48px); padding-top: 0; }

@@ -1,0 +1,20 @@
+{
+  "//": "src/domain 只能用 ES 标准库：不含 DOM、Node 类型，保证 Worker 也能复用",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": [],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["src/domain"],
+  "exclude": ["src/domain/**/*.test.ts"]
+}

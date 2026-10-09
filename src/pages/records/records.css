@@ -1,0 +1,52 @@
+/* The Records page and the "Add record" sheet. Sizes as in the inline styles of prototype v5 lines 207–231 and 446–469.
+   The prototype's screenshots broke 「共 12 条记录」 and 「10,000 × ¥2.05」 onto two lines; here they don't wrap. */
+
+.page.records { padding-top: 28px; }
+.records-header { display: flex; justify-content: space-between; align-items: center; }
+/* Pending-sync note: right under the title (the page gap is 16px; pull back 8px) */
+.records-sync { display: flex; align-items: center; gap: 6px; margin-top: -8px; font-size: 13px; color: var(--color-accent-800); }
+.records-filters { display: flex; flex-direction: column; gap: 10px; }
+
+/* Time pills and type segments: scroll sideways when they don't fit, with no scrollbar */
+.rec-chips,
+.rec-types { overflow-x: auto; scrollbar-width: none; }
+.rec-chips::-webkit-scrollbar,
+.rec-types::-webkit-scrollbar { display: none; }
+.rec-chips { display: flex; gap: 6px; }
+.rec-chip {
+  flex: none;
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-neutral-100);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.rec-chip[aria-pressed='true'] { background: var(--color-text); color: var(--color-bg); }
+
+.rec-count-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.rec-count { font-size: 12px; color: var(--color-neutral-700); white-space: nowrap; }
+.rec-sort { font-size: 13px; }
+.rec-empty { margin: 0; padding: 24px 0; font-size: 14px; color: var(--color-neutral-700); text-align: center; }
+
+.rec-group { display: flex; flex-direction: column; gap: 6px; }
+.rec-month { padding: 0 4px; font-size: 13px; font-weight: 700; color: var(--color-neutral-700); }
+/* The left column keeps at least the width of "account · date" (the prototype's minmax(0, 1fr) let a long deposit reason squeeze it onto two lines);
+   when the right column doesn't fit, the " · reason" after the amount wraps to the next line as a whole; the amount itself never wraps */
+.rec-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 12px 0; }
+.rec-title { font-size: 15px; font-weight: 600; }
+/* The type tag's red is accent-700 (prototype line 1043), unlike .is-loss's accent-800 */
+.rec-type { font-size: 12px; font-weight: 700; text-align: right; }
+.rec-type.tone-gain { color: var(--color-accent-2-800); }
+.rec-type.tone-loss { color: var(--color-accent-700); }
+.rec-type.tone-neutral { color: var(--color-neutral-700); }
+.rec-meta { font-size: 12px; color: var(--color-neutral-700); white-space: nowrap; }
+.rec-amount { font-size: 13px; text-align: right; }
+.rec-amount-main { white-space: nowrap; }
+.rec-note { display: inline-block; }
+
+/* Add record: three columns for quantity / price / fee */
+.rec-trade-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
